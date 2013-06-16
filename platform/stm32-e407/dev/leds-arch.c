@@ -30,13 +30,13 @@
 #include <libopencm3/stm32/gpio.h>
 
 
-#define LED_DISCO_PORT GPIOB
-#define LED_DISCO_PIN_GREEN GPIO7
-#define LED_DISCO_PIN_BLUE GPIO6
+#define LED_DISCO_PORT GPIOC
+#define LED_DISCO_PIN_GREEN GPIO13
+#define LED_DISCO_PIN_BLUE 0
 
 void leds_arch_init(void)
 {
-	rcc_peripheral_enable_clock(&RCC_AHBENR, RCC_AHBENR_GPIOBEN);
+	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPCEN);
 	gpio_mode_setup(LED_DISCO_PORT, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE,
 		LED_DISCO_PIN_BLUE | LED_DISCO_PIN_GREEN);
 }
