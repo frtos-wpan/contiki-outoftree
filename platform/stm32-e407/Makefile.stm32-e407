@@ -21,11 +21,6 @@ CLEAN += *.stm-e407
 
 include $(CONTIKI)/cpu/arm/stm32-ocm3/Makefile.stm32-ocm3
 
-#CFLAGS += -mfloat-abi=hard
-#OBJS += /usr/local/arm-none-eabi/lib/fpu/libc.a
-#CFLAGS += -mcpu=cortex-m4 -mthumb -mfloat-abi=hard  -mfpu=fpv4-sp-d16
-#l-mcpu=cortex-m4 -mfloat-abi=hard -march=armv7e-m -mfpu=fpv4-sp-d16
-
 ifndef BASE_IP
 BASE_IP := 172.16.1.1
 endif
