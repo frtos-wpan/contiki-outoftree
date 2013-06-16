@@ -35,6 +35,22 @@ static void uart_init_gpio_usart2(void)
 }
 #endif
 
+#if DEBUG_UART_CONF == 6
+static void uart_init_gpio_usart6(void)
+{
+	/* Enable clocks for USART6 (and the gpios it's connected to) */
+	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPCEN);
+	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_USART6EN);
+	/* Setup USART6 pins to Alternate Function */
+	gpio_mode_setup(GPIOC, GPIO_MODE_AF, GPIO_PUPD_NONE, GPIO6 | GPIO7);
+	/* Setup Alternate Function 8 - usart4..8 */
+	gpio_set_af(GPIOC, GPIO_AF8, GPIO6 | GPIO7);
+
+	/* USART lines should idle high */
+	gpio_set(GPIOC, GPIO6 | GPIO7);
+}
+#endif
+
 void uart_init_arch(void)
 {
 	// Example platform shows all the options ;)
@@ -42,6 +58,8 @@ void uart_init_arch(void)
 	uart_init_gpio_usart1();
 #elif DEBUG_UART_CONF == 2
 	uart_init_gpio_usart2();
+#elif DEBUG_UART_CONF == 6
+	uart_init_gpio_usart6();
 #else
 #error No support in this example platform for other uarts!
 #endif
