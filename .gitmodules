@@ -1,6 +1,6 @@
 [submodule "libopencm3"]
 	path = libopencm3
-	url = git@github.com:karlp/libopencm3.git
+	url = git@github.com:frtos-wpan/libopencm3.git
 [submodule "contiki"]
 	path = contiki
-	url = git@github.com:karlp/contiki-locm3.git
+	url = git@github.com:frtos-wpan/contiki.git
