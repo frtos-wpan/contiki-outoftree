@@ -10,6 +10,7 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 
+#include "../../contiki/cpu/avr/radio/rf230bb/at86rf230_registermap.h"
 
 #include "hal.h"
 
@@ -250,4 +251,19 @@ void hal_sram_read(uint8_t address, uint8_t length, uint8_t *data)
 void hal_sram_write(uint8_t address, uint8_t length, uint8_t *data)
 {
 	/* not used */
+}
+
+
+void hal_test(void)
+{
+	uint8_t pn, vn;
+	uint8_t m0, m1;
+
+	hal_init();
+	pn = hal_register_read(RG_PART_NUM);
+	vn = hal_register_read(RG_VERSION_NUM);
+	m0 = hal_register_read(RG_MAN_ID_0);
+	m1 = hal_register_read(RG_MAN_ID_1);
+	printf("part 0x%02x revision 0x%02x manufacturer xxxx%02x%02x\n",
+	    pn, vn, m1, m0);
 }
