@@ -36,26 +36,29 @@
  */
 
 #define	PORT_IRQ	GPIOC
-#define	BIT_IRQ		GPIO10
+#define	BIT_IRQ		10
 #define	PORT_nSEL	GPIOC
-#define	BIT_nSEL	GPIO11
+#define	BIT_nSEL	11
 #define	PORT_MOSI	GPIOD
-#define	BIT_MOSI	GPIO2
+#define	BIT_MOSI	2
 #define	PORT_SLP_TR	GPIOC
-#define	BIT_SLP_TR	GPIO12
+#define	BIT_SLP_TR	12
 #define	PORT_MISO	GPIOC
-#define	BIT_MISO	GPIO8
+#define	BIT_MISO	8
 #define	PORT_SCLK	GPIOC
-#define	BIT_SCLK	GPIO9
+#define	BIT_SCLK	9
+
+#define	GPIO_CONCAT(n)	GPIO##n
+#define	GPIO(n)		GPIO_CONCAT(n)
 
 #define	OUT(pin)	gpio_mode_setup(PORT_##pin, GPIO_MODE_OUTPUT, \
-			    GPIO_PUPD_NONE, BIT_##pin)
+			    GPIO_PUPD_NONE, GPIO(BIT_##pin))
 #define	IN(pin)		gpio_mode_setup(PORT_##pin, GPIO_MODE_INPUT, \
-			    GPIO_PUPD_NONE, BIT_##pin)
-#define	SET(pin)	GPIO_BSRR(PORT_##pin) = (BIT_##pin)
-#define	CLR(pin)	GPIO_BSRR(PORT_##pin) = (BIT_##pin << 16)
+			    GPIO_PUPD_NONE, GPIO(BIT_##pin))
+#define	SET(pin)	GPIO_BSRR(PORT_##pin) = GPIO(BIT_##pin)
+#define	CLR(pin)	GPIO_BSRR(PORT_##pin) = GPIO(BIT_##pin) << 16
 
-#define	PIN(pin)	!!(GPIO_IDR(PORT_##pin) & BIT_##pin)
+#define	PIN(pin)	!!(GPIO_IDR(PORT_##pin) & GPIO(BIT_##pin))
 
 
 /* ----- Control signals --------------------------------------------------- */
@@ -117,7 +120,9 @@ void hal_init(void)
 	OUT(SCLK);
 	OUT(nSEL);
 	OUT(SLP_TR);
-	//@@@ IN(IRQ);
+	IN(IRQ);
+
+	/* @@@ try to force transceiver into TRX_OFF ? */
 }
 
 
