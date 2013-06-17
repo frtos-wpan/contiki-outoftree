@@ -1,5 +1,5 @@
 /*
- * hal.c - Substitute for cpu/avr/radio/rf230bb/halbb.c
+ * hal.c - Substitute for cpu/avr/radio/rf230bb/halbb.c (atben on STM32-E407)
  *
  * Developed by Werner Almesberger for Actility S.A., and
  * licensed under LGPLv2 by Actility S.A.
@@ -227,7 +227,7 @@ void hal_frame_read(hal_rx_frame_t *rx_frame)
 		*(uint8_t *) buf++ = spi_recv();
 	rx_frame->lqi = spi_recv();
         spi_end();
-
+	rx_frame->crc = true;	/* checked by hardware */
 }
 
 
