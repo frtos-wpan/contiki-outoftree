@@ -8,8 +8,10 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/exti.h>
 
 #include "../../contiki/cpu/avr/radio/rf230bb/at86rf230_registermap.h"
 
@@ -60,6 +62,9 @@
 #define	CLR(pin)	GPIO_BSRR(PORT_##pin) = GPIO(BIT_##pin) << 16
 
 #define	PIN(pin)	!!(GPIO_IDR(PORT_##pin) & GPIO(BIT_##pin))
+
+#define	EXTI_CONCAT(n)	EXTI##n
+#define	EXTI(n)		EXTI_CONCAT(n)
 
 
 /* ----- Control signals --------------------------------------------------- */
@@ -233,17 +238,46 @@ void hal_sram_write(uint8_t address, uint8_t length, uint8_t *data)
 
 void hal_enable_trx_interrupt(void)
 {
-	//@@@
+	exti_enable_request(EXTI(BIT_IRQ));
 }
 
 
 void hal_disable_trx_interrupt(void)
 {
-	//@@@
+	exti_disable_request(EXTI(BIT_IRQ));
+}
+
+
+static volatile int handled = 0;
+
+void exti15_10_isr(void)
+{
+handled = 1;
+	exti_reset_request(EXTI(BIT_IRQ));
 }
 
 
 /* ----- Initialization ---------------------------------------------------- */
+
+
+#include <libopencm3/stm32/syscfg.h>
+
+static void dump(void)
+{
+printf("NVIC(1) 40 en 0x%08x pend 0x%08x act 0x%08x\n",
+    (unsigned) NVIC_ISER(1), (unsigned) NVIC_ISPR(1), (unsigned) NVIC_IABR(1));
+
+printf("exti = 0x%x port = 0x%x\n", EXTI(BIT_IRQ), PORT_IRQ);
+printf("irqmask 0x%08x\nevtmask 0x%08x\nrtriggr 0x%08x\n",
+    (unsigned) EXTI_IMR, (unsigned) EXTI_EMR, (unsigned) EXTI_RTSR);
+printf("ftriggr 0x%08x\nswevent 0x%08x\npending 0x%08x\n",
+    (unsigned) EXTI_FTSR, (unsigned) EXTI_SWIER, (unsigned) EXTI_PR);
+
+printf("map1 0x%04x\nmap2 0x%04x\n",
+    (unsigned) SYSCFG_EXTICR1, (unsigned) SYSCFG_EXTICR2);
+printf("map3 0x%04x\nmap4 0x%04x\n",
+    (unsigned) SYSCFG_EXTICR3, (unsigned) SYSCFG_EXTICR4);
+}
 
 
 void hal_init(void)
@@ -261,6 +295,23 @@ void hal_init(void)
 	OUT(nSEL);
 	OUT(SLP_TR);
 	IN(IRQ);
+
+	hal_subregister_write(RG_TRX_CTRL_1, 1, 0, 0);
+
+	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_SYSCFGEN);
+	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
+	exti_select_source(EXTI(BIT_IRQ), PORT_IRQ);
+	exti_set_trigger(EXTI(BIT_IRQ), EXTI_TRIGGER_RISING);
+	hal_enable_trx_interrupt();
+
+printf("syscfg_exticr3 %p\n", &SYSCFG_EXTICR3);
+printf("before %d 0x%x handled %d\n", PIN(IRQ),
+    (unsigned) exti_get_flag_status(EXTI(BIT_IRQ)), handled);
+dump();
+	hal_subregister_write(RG_TRX_CTRL_1, 1, 0, 1);
+printf("after %d 0x%x handled %d\n", PIN(IRQ),
+    (unsigned) exti_get_flag_status(EXTI(BIT_IRQ)), handled);
+dump();
 
 	/* @@@ try to force transceiver into TRX_OFF ? */
 }
