@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# mkhalh - Extract the useful bits of rf230bb/hal.h
+#
+# Developed by Werner Almesberger for Actility S.A., and
+# licensed under LGPLv2 by Actility S.A.
+#
+
+#
+# The first sed line removes things related to the 128RFA1, because some
+# declarations clash with the rest. The /#e/ matches #endif and #else.
+#
+# The second line
+# - preserves anything beginning with HAL_MAX, i.e., HAL_MAX_FRAME_LENGTH,
+# - removes all CPP directives, e.g., the bothersome platform check, and
+# - removes all single-line comments, so one can actually read the file
+
+echo '/* MACHINE-GENERATED. DO NOT EDIT ! */'
+echo
+sed -e '/#if.*__AVR_ATmega128RFA1__/,/^#e/d' \
+    -e '/HAL_MAX/{p;d;};/^#/d;/^\/\//d' ||
+    { rm -f $OUT; exit 1; }
