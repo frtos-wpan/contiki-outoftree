@@ -6,6 +6,7 @@
  */
 
 #include <stdint.h>
+#include <stdio.h>
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
@@ -91,38 +92,6 @@ void hal_set_slptr_low(void)
 bool hal_get_slptr(void)
 {
 	return PIN(SLP_TR);
-}
-
-
-void hal_enable_trx_interrupt(void)
-{
-	//@@@
-}
-
-
-void hal_disable_trx_interrupt(void)
-{
-	//@@@
-}
-
-
-void hal_init(void)
-{
-	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPCEN);
-	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPDEN);
-
-	CLR(SCLK);
-	SET(nSEL);
-	CLR(SLP_TR);
-
-	OUT(MOSI);
-	IN(MISO);
-	OUT(SCLK);
-	OUT(nSEL);
-	OUT(SLP_TR);
-	IN(IRQ);
-
-	/* @@@ try to force transceiver into TRX_OFF ? */
 }
 
 
@@ -256,6 +225,44 @@ void hal_sram_read(uint8_t address, uint8_t length, uint8_t *data)
 void hal_sram_write(uint8_t address, uint8_t length, uint8_t *data)
 {
 	/* not used */
+}
+
+
+/* ----- Interrupts -------------------------------------------------------- */
+
+
+void hal_enable_trx_interrupt(void)
+{
+	//@@@
+}
+
+
+void hal_disable_trx_interrupt(void)
+{
+	//@@@
+}
+
+
+/* ----- Initialization ---------------------------------------------------- */
+
+
+void hal_init(void)
+{
+	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPCEN);
+	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPDEN);
+
+	CLR(SCLK);
+	SET(nSEL);
+	CLR(SLP_TR);
+
+	OUT(MOSI);
+	IN(MISO);
+	OUT(SCLK);
+	OUT(nSEL);
+	OUT(SLP_TR);
+	IN(IRQ);
+
+	/* @@@ try to force transceiver into TRX_OFF ? */
 }
 
 
