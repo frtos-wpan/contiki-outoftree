@@ -52,8 +52,8 @@
 			    GPIO_PUPD_NONE, BIT_##pin)
 #define	IN(pin)		gpio_mode_setup(PORT_##pin, GPIO_MODE_INPUT, \
 			    GPIO_PUPD_NONE, BIT_##pin)
-#define	SET(pin)	GPIO_ODR(PORT_##pin) |= BIT_##pin
-#define	CLR(pin)	GPIO_ODR(PORT_##pin) &= ~BIT_##pin
+#define	SET(pin)	GPIO_BSRR(PORT_##pin) = (BIT_##pin)
+#define	CLR(pin)	GPIO_BSRR(PORT_##pin) = (BIT_##pin << 16)
 
 #define	PIN(pin)	!!(GPIO_IDR(PORT_##pin) & BIT_##pin)
 
