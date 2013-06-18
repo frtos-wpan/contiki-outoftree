@@ -13,6 +13,8 @@
 #include "contiki-conf.h"
 #include <libopencm3/stm32/rcc.h>
 
+#include "net/netstack.h"
+
 
 static void
 configure_mcu_clocks(void)
@@ -39,6 +41,10 @@ hal_test();
   process_start(&etimer_process, NULL);
   ctimer_init();
   autostart_start(autostart_processes);
+
+  /* see ../native/contiki-main.c */
+  netstack_init();
+
   while(1) {
     do {
 	// meant to do some sleeping here, if we want to save power...

@@ -9,5 +9,9 @@
 cat <<EOF
 /* MACHINE-GENERATED. DO NOT EDIT ! */
 
+#define	PSTR(s)		s
+#define	printf_P	printf
+
 EOF
-sed 's|"rf230bb.h"|"platform/stm32-e407/rf230bb.h"|'
+sed -e 's|"rf230bb.h"|"platform/stm32-e407/rf230bb.h"|' \
+    -e 's/DEBUG 0/DEBUG 1/'
