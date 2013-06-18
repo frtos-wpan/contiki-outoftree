@@ -23,6 +23,8 @@
 #define	AT86RF230_BUF_READ	0x20
 #define	AT86RF230_BUF_WRITE	0x60
 
+#define	IRQ_TRX_END		0x08
+
 
 /* ----- I/O pin definitions ----------------------------------------------- */
 
@@ -65,6 +67,15 @@
 
 #define	EXTI_CONCAT(n)	EXTI##n
 #define	EXTI(n)		EXTI_CONCAT(n)
+
+
+/* ----- Items shared with rf230bb ----------------------------------------- */
+
+
+void rf230_interrupt(void);
+
+extern hal_rx_frame_t rxframe[RF230_CONF_RX_BUFFERS];
+extern uint8_t rxframe_head, rxframe_tail;
 
 
 /* ----- Control signals --------------------------------------------------- */
@@ -250,7 +261,27 @@ void hal_disable_trx_interrupt(void)
 
 void exti15_10_isr(void)
 {
+	uint8_t irq, state;
+
 	exti_reset_request(EXTI(BIT_IRQ));
+	irq = hal_register_read(RG_IRQ_STATUS);
+
+	if (!(irq & IRQ_TRX_END))
+		return;
+
+	/* @@@ record RSSI ? */
+	/* @@@ check power level ? */
+	/* @@@ make BAT_LOW one-shot ? */
+
+	state = hal_subregister_read(SR_TRX_STATUS);
+	if (state == BUSY_RX_AACK || state == RX_ON || state == BUSY_RX ||
+	     state == RX_AACK_ON) {
+		hal_frame_read(&rxframe[rxframe_tail]);
+		rxframe_tail++;
+		if (rxframe_tail >= RF230_CONF_RX_BUFFERS)
+			rxframe_tail = 0;
+		rf230_interrupt();
+	}
 }
 
 

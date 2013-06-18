@@ -11,12 +11,20 @@
 # declarations clash with the rest. The /#e/ matches #endif and #else.
 #
 # The second line
-# - preserves anything beginning with HAL_MAX, i.e., HAL_MAX_FRAME_LENGTH,
+# - preserves anything containing HAL_MAX, i.e., HAL_MAX_FRAME_LENGTH,
+#
+# The third line
+# - preserves the definition of RF230_CONF_RX_BUFFERS
+#
+# The fourth line
 # - removes all CPP directives, e.g., the bothersome platform check, and
 # - removes all single-line comments, so one can actually read the file
+#
 
 echo '/* MACHINE-GENERATED. DO NOT EDIT ! */'
 echo
 sed -e '/#if.*__AVR_ATmega128RFA1__/,/^#e/d' \
-    -e '/HAL_MAX/{p;d;};/^#/d;/^\/\//d' ||
+    -e '/HAL_MAX/{p;d;}' \
+    -e '/#if.*RF230_CONF_RX_BUFFERS/,/#endif/{p;d;}' \
+    -e '/^#/d;/^\/\//d' ||
     { rm -f $OUT; exit 1; }
