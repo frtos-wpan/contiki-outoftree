@@ -21,6 +21,9 @@ CONTIKI_TARGET_SOURCEFILES += hal.c
 CLEAN += *.stm-e407
 CLEAN += hal.h
 
+ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -march=armv7e-m \
+             -mfloat-abi=hard -mfpu=fpv4-sp-d16
+
 include $(CONTIKI)/cpu/arm/stm32-ocm3/Makefile.stm32-ocm3
 
 hal.h:	contiki/cpu/avr/radio/rf230bb/hal.h
