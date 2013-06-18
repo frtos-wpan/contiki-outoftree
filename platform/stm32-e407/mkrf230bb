@@ -1,0 +1,13 @@
+#!/bin/sh
+#
+# mkrf230bb - Adapt rf230bb.c to use our hal.h
+#
+# Developed by Werner Almesberger for Actility S.A., and
+# licensed under LGPLv2 by Actility S.A.
+#
+
+cat <<EOF
+/* MACHINE-GENERATED. DO NOT EDIT ! */
+
+EOF
+sed 's|"rf230bb.h"|"platform/stm32-e407/rf230bb.h"|'

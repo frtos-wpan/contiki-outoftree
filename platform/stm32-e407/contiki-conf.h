@@ -29,6 +29,11 @@ typedef unsigned int uip_stats_t;
 
 #define UIP_CONF_TCP_FORWARD 1
 
+#define NETSTACK_CONF_MAC	nullmac_driver
+#define NETSTACK_CONF_RDC	sicslowmac_driver
+#define NETSTACK_CONF_FRAMER	framer_802154
+#define NETSTACK_CONF_RADIO	rf230_driver
+
 /* Prefix for relocation sections in ELF files */
 #define REL_SECT_PREFIX ".rel"
 
