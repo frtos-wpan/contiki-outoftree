@@ -304,17 +304,16 @@ void hal_init(void)
 	OUT(SLP_TR);
 	IN(IRQ);
 
-	hal_subregister_write(RG_TRX_CTRL_1, 1, 0, 0);
-
 	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_SYSCFGEN);
 	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
 	exti_select_source(EXTI(BIT_IRQ), PORT_IRQ);
 	exti_set_trigger(EXTI(BIT_IRQ), EXTI_TRIGGER_RISING);
 	hal_enable_trx_interrupt();
 
-	hal_subregister_write(RG_TRX_CTRL_1, 1, 0, 1);
-
-	/* @@@ try to force transceiver into TRX_OFF ? */
+	/*
+	 * rf230bb.c will force the transceiver into TRX_OFF, so we're probably
+	 * good despite not being able to do a proper hardware reset.
+	 */
 }
 
 
