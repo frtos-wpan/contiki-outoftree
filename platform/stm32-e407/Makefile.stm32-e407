@@ -26,24 +26,26 @@ ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -march=armv7e-m \
 
 include $(CONTIKI)/cpu/arm/stm32-ocm3/Makefile.stm32-ocm3
 
-hal.h:		contiki/cpu/avr/radio/rf230bb/hal.h platform/stm32-e407/mkhalh
-		platform/stm32-e407/mkhalh <$< >$@ || { rm -f $@; exit 1; }
+MKHALH = platform/stm32-e407/mkhalh
+MKRF230BB = platform/stm32-e407/mkrf230bb
+
+hal.h:		contiki/cpu/avr/radio/rf230bb/hal.h $(MKHALH)
+		$(MKHALH) <$< >$@ || { rm -f $@; exit 1; }
 
 hal.c:		hal.h
 rf230bb.c:	hal.h
 
-rf230bb.c:	$(CONTIKI)/cpu/avr/radio/rf230bb/rf230bb.c \
-		  platform/stm32-e407/mkrf230bb
-		platform/stm32-e407/mkrf230bb <$< >$@ || { rm -f $@; exit 1; }
+rf230bb.c:	$(CONTIKI)/cpu/avr/radio/rf230bb/rf230bb.c $(MKRF230BB)
+		$(MKRF230BB) <$< >$@ || { rm -f $@; exit 1; }
 
 ifndef BASE_IP
 BASE_IP := 172.16.1.1
 endif
 
-.PHONY:	bin dfu
+.PHONY:		bin dfu
 
-bin:	foo.stm32-e407
-	$(PREFIX)-objcopy -O binary $< $@ || { rm -f $@; exit 1; }
+bin:		foo.stm32-e407
+		$(PREFIX)-objcopy -O binary $< $@ || { rm -f $@; exit 1; }
 
-dfu:	bin
-	dfu-util -d 0483:df11 -a 0 -s 0x8000000 -D $<
+dfu:		bin
+		dfu-util -d 0483:df11 -a 0 -s 0x8000000 -D $<
