@@ -39,10 +39,21 @@ bool hal_get_slptr(void);
 #define	HAL_LEAVE_CRITICAL_REGION()	do {} while (0)
 
 #define	cli()				do {} while (0)
-#define	delay_us(n)			do {} while (0)
 
 unsigned char SREG;
 
+
+/*
+ * @@@ The loop in delay_us only works if the system clock is 48 MHz !
+ */
+
+static inline void delay_us(unsigned n)
+{
+	unsigned i = n*12;
+
+	while (i--)
+		asm("");
+}
 EOF
 
 sed -e '/#if.*__AVR_ATmega128RFA1__/,/^#e/d' \
