@@ -83,6 +83,7 @@ void rtc_wkup_isr(void)
 void
 rtimer_arch_init(void)
 {
+#if 0
 	/* turn on power block to enable unlocking */
 	rcc_peripheral_enable_clock(&RCC_APB1ENR, RCC_APB1ENR_PWREN);
 	pwr_disable_backup_domain_write_protect();
@@ -130,6 +131,7 @@ rtimer_arch_init(void)
 
 	/* And wait for synchro.. */
 	rtc_wait_for_synchro();
+#endif
 }
 
 static int setup_rtc_wakeup(int ticks)
