@@ -41,7 +41,7 @@
 #include "leds.h"
 
 #include <stdio.h> /* For printf() */
-#include "blipper.h"
+//#include "blipper.h"
 #include "serial-shell.h"
 #include "shell-ps.h"
 /*---------------------------------------------------------------------------*/
@@ -59,10 +59,16 @@ PROCESS_THREAD(foo_process, ev, data)
   shell_ps_init();
   shell_blink_init();
   shell_powertrace_init();
+  shell_rime_debug_init();
+  shell_rime_ping_init(); /* Rime ping */
+  shell_rime_sniff_init();
+  shell_rime_init();
+#if 0
   static struct blipper_info bl1 = { CLOCK_SECOND * 2, 'a' };
   static struct blipper_info bl2 = { CLOCK_SECOND * 5, 'b' };
   process_start(&blipper_process, (void*)&bl1);
   process_start(&blipper2_process, (void*)&bl2);
+#endif
   
   PROCESS_END();
 }

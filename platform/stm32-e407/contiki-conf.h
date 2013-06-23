@@ -8,7 +8,7 @@
 
 #define WITH_UIP 1
 #define WITH_ASCII 1
-#define WITH_SERIAL_LINE_INPUT 0
+#define WITH_SERIAL_LINE_INPUT 1
 
 #define DEBUG_UART_CONF 6
 
