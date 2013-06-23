@@ -13,7 +13,7 @@ endif
 CONTIKI_TARGET_DIRS = . dev
 CONTIKI_TARGET_MAIN = ${addprefix $(OBJECTDIR)/,contiki-main.o}
 
-CONTIKI_TARGET_SOURCEFILES = contiki-main.c clock.c irq.c
+CONTIKI_TARGET_SOURCEFILES = contiki-main.c clock.c irq.c leds.c
 
 CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
 

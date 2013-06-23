@@ -37,7 +37,8 @@ endif
 ifdef CORE
 .PHONY: symbols.c symbols.h
 symbols.c symbols.h:
-	$(NM) -C $(CORE) | grep -v @ | grep -v dll_crt0 | awk -f $(CONTIKI)/tools/mknmlist > symbols.c
+	$(NM) -C $(CORE) | grep -v @ | grep -v dll_crt0 | \
+	  awk -f $(CONTIKI)/tools/mknmlist > symbols.c
 else
 symbols.c symbols.h:
 	cp ${CONTIKI}/tools/empty-symbols.c symbols.c
