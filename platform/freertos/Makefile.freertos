@@ -8,10 +8,6 @@ FREERTOS = $(shell pwd)/../freertos
 FREERTOS_TARGET = $(FREERTOS)/FreeRTOS/Demo/E407
 FREERTOS_PORTABLE = $(FREERTOS)/FreeRTOS/Source/portable/GCC/ARM_CM4F
 
-ifeq ($(HOST_OS),Darwin)
-  AROPTS = rc
-endif
-
 ifeq ($(UIP_CONF_IPV6),1)
 CFLAGS += -DWITH_UIP6=1
 endif
@@ -25,8 +21,25 @@ CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
 
 .SUFFIXES:
 
+#####  STM32F407  #############################################################
+
+# Master clock frequency
+MCK=32000000
+
+OPENCM3_BASE=libopencm3
+OPENCM3_FAMILY=STM32F4
+LINKERSCRIPT=stm32/f4/stm32f405x6.ld
+
+ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -march=armv7e-m \
+             -mfloat-abi=hard -mfpu=fpv4-sp-d16
+
+include $(CONTIKI)/cpu/arm/stm32-ocm3/Makefile.stm32-ocm3
+
+STM32OCM3 = clock.c
+
+#####  End STM32F407  #########################################################
+
 ### Define the CPU directory
-#CONTIKI_CPU=$(CONTIKI)/cpu/freertos
 CONTIKI_CPU=./cpu/freertos
 include $(CONTIKI_CPU)/Makefile.freertos
 
