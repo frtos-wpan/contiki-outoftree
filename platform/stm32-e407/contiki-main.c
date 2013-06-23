@@ -33,7 +33,7 @@ main()
   leds_init();
   process_init();
 
-hal_test();
+//hal_test();
 #if WITH_SERIAL_LINE_INPUT
   uart_set_input(serial_line_input_byte);
   serial_line_init();
