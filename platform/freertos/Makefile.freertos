@@ -2,6 +2,12 @@ ifndef CONTIKI
   $(error CONTIKI not defined! You must specify where CONTIKI resides!)
 endif
 
+FREERTOS = $(shell pwd)/../freertos
+# the items below should come from FreeRTOS (if we kick off the build from
+# there)
+FREERTOS_TARGET = $(FREERTOS)/FreeRTOS/Demo/E407
+FREERTOS_PORTABLE = $(FREERTOS)/FreeRTOS/Source/portable/GCC/ARM_CM4F
+
 ifeq ($(HOST_OS),Darwin)
   AROPTS = rc
 endif
@@ -23,3 +29,8 @@ CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
 #CONTIKI_CPU=$(CONTIKI)/cpu/freertos
 CONTIKI_CPU=./cpu/freertos
 include $(CONTIKI_CPU)/Makefile.freertos
+
+CFLAGS += -I$(FREERTOS)/FreeRTOS/Source/include \
+	  -Iplatform/freertos/wrapper \
+	  -I$(FREERTOS_TARGET) \
+	  -I$(FREERTOS_PORTABLE)

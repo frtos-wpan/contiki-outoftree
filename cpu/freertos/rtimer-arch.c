@@ -37,8 +37,6 @@
  *         Adam Dunkels <adam@sics.se>
  */
 
-#include <signal.h>
-#include <sys/time.h>
 #include <stddef.h>
 
 #include "sys/rtimer.h"
@@ -56,19 +54,24 @@
 static void
 interrupt(int sig)
 {
+#if 0
   signal(sig, interrupt);
   rtimer_run_next();
+#endif
 }
 /*---------------------------------------------------------------------------*/
 void
 rtimer_arch_init(void)
 {
+#if 0
   signal(SIGALRM, interrupt);
+#endif
 }
 /*---------------------------------------------------------------------------*/
 void
 rtimer_arch_schedule(rtimer_clock_t t)
 {
+#if 0
   struct itimerval val;
   rtimer_clock_t c;
 
@@ -82,5 +85,6 @@ rtimer_arch_schedule(rtimer_clock_t t)
 
   val.it_interval.tv_sec = val.it_interval.tv_usec = 0;
   setitimer(ITIMER_REAL, &val, NULL);
+#endif
 }
 /*---------------------------------------------------------------------------*/

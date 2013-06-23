@@ -40,15 +40,8 @@
 
 #include <stdlib.h>
 #include <signal.h>
-#include <ucontext.h>
 
-struct mtarch_t {
-  char stack[MTARCH_STACKSIZE];
-  ucontext_t context;
-};
-
-static ucontext_t main_context;
-static ucontext_t *running_context;
+#include "freertos-task.h"
 
 /*--------------------------------------------------------------------------*/
 void
@@ -66,53 +59,29 @@ mtarch_start(struct mtarch_thread *thread,
 	     void (* function)(void *data),
 	     void *data)
 {
-  thread->mt_thread = malloc(sizeof(struct mtarch_t));
-
-  getcontext(&((struct mtarch_t *)thread->mt_thread)->context);
-
-  ((struct mtarch_t *)thread->mt_thread)->context.uc_link = NULL;
-  ((struct mtarch_t *)thread->mt_thread)->context.uc_stack.ss_sp = 
-			((struct mtarch_t *)thread->mt_thread)->stack;
-  ((struct mtarch_t *)thread->mt_thread)->context.uc_stack.ss_size = 
-			sizeof(((struct mtarch_t *)thread->mt_thread)->stack);
-
-  /* Some notes:
-     - If a CPU needs stronger alignment for the stack than malloc()
-       guarantees (like i.e. IA64) then makecontext() is supposed to
-       add that alignment internally.
-     - According to POSIX the arguments to function() are of type int
-       and there are in fact 64-bit implementations which support only
-       32 bits per argument meaning that a pointer argument has to be
-       splitted into two arguments.
-     - Most implementations interpret context.uc_stack.ss_sp on entry
-       as the lowest stack address even if the CPU stack actually grows
-       downwards. Although this means that ss_sp does NOT represent the
-       CPU stack pointer this behaviour makes perfectly sense as it is
-       the only way to stay independent from the CPU architecture. But
-       Solaris prior to release 10 interprets ss_sp as highest stack
-       address thus requiring special handling. */
-  makecontext(&((struct mtarch_t *)thread->mt_thread)->context,
-	      (void (*)(void))function, 1, data);
+  xTaskCreate(function, (const signed char * const) "ctsk",
+    MTARCH_STACKSIZE/sizeof(int), data, tskIDLE_PRIORITY, &thread->task);
 }
 /*--------------------------------------------------------------------------*/
 void
 mtarch_yield(void)
 {
-  swapcontext(running_context, &main_context);
+  taskYIELD();
 }
 /*--------------------------------------------------------------------------*/
 void
 mtarch_exec(struct mtarch_thread *thread)
 {
-  running_context = &((struct mtarch_t *)thread->mt_thread)->context;
-  swapcontext(&main_context, running_context);
-  running_context = NULL;
+  taskENTER_CRITICAL();
+  vTaskResume(thread->task);
+  vTaskSuspend(NULL);
+  taskEXIT_CRITICAL();
 }
 /*--------------------------------------------------------------------------*/
 void
 mtarch_stop(struct mtarch_thread *thread)
 {
-  free(thread->mt_thread);
+  vTaskDelete(thread->task);
 }
 /*--------------------------------------------------------------------------*/
 void

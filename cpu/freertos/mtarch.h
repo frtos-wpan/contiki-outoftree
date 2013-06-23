@@ -35,8 +35,10 @@
 #ifndef __MTARCH_H__
 #define __MTARCH_H__
 
+#include "freertos-task.h"
+
 struct mtarch_thread {
-  void *mt_thread;
+  xTaskHandle task;
 };
 
 #endif /* __MTARCH_H__ */

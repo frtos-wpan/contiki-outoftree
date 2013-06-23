@@ -38,28 +38,20 @@
  */
 
 #include "sys/clock.h"
-#include <time.h>
-#include <sys/time.h>
+
+#include "freertos-task.h"
 
 /*---------------------------------------------------------------------------*/
 clock_time_t
 clock_time(void)
 {
-  struct timeval tv;
-
-  gettimeofday(&tv, NULL);
-
-  return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+  return xTaskGetTickCountFromISR();
 }
 /*---------------------------------------------------------------------------*/
 unsigned long
 clock_seconds(void)
 {
-  struct timeval tv;
-
-  gettimeofday(&tv, NULL);
-
-  return tv.tv_sec;
+  return xTaskGetTickCountFromISR() / 1000; /* @@@@ */
 }
 /*---------------------------------------------------------------------------*/
 void
