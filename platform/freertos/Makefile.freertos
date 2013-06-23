@@ -35,8 +35,8 @@ CONTIKI_SOURCEFILES += $(CTK) ctk-conio.c $(CONTIKI_TARGET_SOURCEFILES)
 .SUFFIXES:
 
 ### Define the CPU directory
-CONTIKI_CPU=$(CONTIKI)/cpu/native
-include $(CONTIKI)/cpu/native/Makefile.native
+CONTIKI_CPU=$(CONTIKI)/cpu/freertos
+include $(CONTIKI)/cpu/freertos/Makefile.freertos
 
 ifeq ($(HOST_OS),Windows)
 CFLAGS += -I/usr/include/ncurses
