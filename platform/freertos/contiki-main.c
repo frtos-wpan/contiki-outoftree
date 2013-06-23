@@ -33,12 +33,6 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <unistd.h>
-#include <sys/select.h>
-
-#ifdef __CYGWIN__
-#include "net/wpcap-drv.h"
-#endif /* __CYGWIN__ */
 
 #include "contiki.h"
 #include "net/netstack.h"
@@ -53,69 +47,8 @@
 
 #include "net/rime.h"
 
-#ifdef SELECT_CONF_MAX
-#define SELECT_MAX SELECT_CONF_MAX
-#else
-#define SELECT_MAX 8
-#endif
-
-static const struct select_callback *select_callback[SELECT_MAX];
-static int select_max = 0;
-
 static uint8_t serial_id[] = {0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08};
 static uint16_t node_id = 0x0102;
-/*---------------------------------------------------------------------------*/
-int
-select_set_callback(int fd, const struct select_callback *callback)
-{
-  int i;
-  if(fd >= 0 && fd < SELECT_MAX) {
-    /* Check that the callback functions are set */
-    if(callback != NULL &&
-       (callback->set_fd == NULL || callback->handle_fd == NULL)) {
-      callback = NULL;
-    }
-
-    select_callback[fd] = callback;
-
-    /* Update fd max */
-    if(callback != NULL) {
-      if(fd > select_max) {
-        select_max = fd;
-      }
-    } else {
-      select_max = 0;
-      for(i = SELECT_MAX - 1; i > 0; i--) {
-        if(select_callback[i] != NULL) {
-          select_max = i;
-          break;
-        }
-      }
-    }
-    return 1;
-  }
-  return 0;
-}
-/*---------------------------------------------------------------------------*/
-static int
-stdin_set_fd(fd_set *rset, fd_set *wset)
-{
-  FD_SET(STDIN_FILENO, rset);
-  return 1;
-}
-static void
-stdin_handle_fd(fd_set *rset, fd_set *wset)
-{
-  char c;
-  if(FD_ISSET(STDIN_FILENO, rset)) {
-    if(read(STDIN_FILENO, &c, 1) > 0) {
-      serial_line_input_byte(c);
-    }
-  }
-}
-const static struct select_callback stdin_fd = {
-  stdin_set_fd, stdin_handle_fd
-};
 /*---------------------------------------------------------------------------*/
 static void
 set_rime_addr(void)
@@ -166,25 +99,9 @@ main(int argc, char **argv)
   contiki_argc = argc;
   contiki_argv = argv;
 
-  /* native under windows is hardcoded to use the first one or two args */
-  /* for wpcap configuration so this needs to be "removed" from         */
-  /* contiki_args (used by the native-border-router) */
-#ifdef __CYGWIN__
-  contiki_argc--;
-  contiki_argv++;
-#ifdef UIP_FALLBACK_INTERFACE
-  contiki_argc--;
-  contiki_argv++;
-#endif
-#endif
-
   process_init();
   process_start(&etimer_process, NULL);
   ctimer_init();
-
-#if WITH_GUI
-  process_start(&ctk_process, NULL);
-#endif
 
   set_rime_addr();
 
@@ -197,9 +114,6 @@ main(int argc, char **argv)
   memcpy(&uip_lladdr.addr, serial_id, sizeof(uip_lladdr.addr));
 
   process_start(&tcpip_process, NULL);
-#ifdef __CYGWIN__
-  process_start(&wpcap_process, NULL);
-#endif
   printf("Tentative link-local IPv6 address ");
   {
     uip_ds6_addr_t *lladdr;
@@ -222,51 +136,13 @@ main(int argc, char **argv)
 
   autostart_start(autostart_processes);
 
-  /* Make standard output unbuffered. */
-  setvbuf(stdout, (char *)NULL, _IONBF, 0);
-
-  select_set_callback(STDIN_FILENO, &stdin_fd);
   while(1) {
-    fd_set fdr;
-    fd_set fdw;
-    int maxfd;
-    int i;
-    int retval;
-    struct timeval tv;
-
-    retval = process_run();
-
-    tv.tv_sec = 0;
-    tv.tv_usec = retval ? 1 : 1000;
-
-    FD_ZERO(&fdr);
-    FD_ZERO(&fdw);
-    maxfd = 0;
-    for(i = 0; i <= select_max; i++) {
-      if(select_callback[i] != NULL && select_callback[i]->set_fd(&fdr, &fdw)) {
-        maxfd = i;
-      }
-    }
-
-    retval = select(maxfd + 1, &fdr, &fdw, NULL, &tv);
-    if(retval < 0) {
-      perror("select");
-    } else if(retval > 0) {
-      /* timeout => retval == 0 */
-      for(i = 0; i <= maxfd; i++) {
-        if(select_callback[i] != NULL) {
-          select_callback[i]->handle_fd(&fdr, &fdw);
-        }
-      }
-    }
-
+    if (process_run())
+      /* delay 1 us */;
+    else
+      /* delay 1 s */;
     etimer_request_poll();
 
-#if WITH_GUI
-    if(console_resize()) {
-       ctk_restore();
-    }
-#endif /* WITH_GUI */
   }
 
   return 0;
