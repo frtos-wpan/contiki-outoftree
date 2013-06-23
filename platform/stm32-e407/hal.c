@@ -84,6 +84,7 @@ extern uint8_t rxframe_head, rxframe_tail;
 void hal_set_rst_low(void)
 {
 	/* not supported by hardware */
+	hal_register_read(RG_IRQ_STATUS);
 }
 
 
@@ -303,6 +304,8 @@ void hal_init(void)
 	OUT(nSEL);
 	OUT(SLP_TR);
 	IN(IRQ);
+
+	hal_register_read(RG_IRQ_STATUS);
 
 	rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_SYSCFGEN);
 	nvic_enable_irq(NVIC_EXTI15_10_IRQ);
