@@ -79,11 +79,8 @@ set_rime_addr(void)
 
 
 /*---------------------------------------------------------------------------*/
-int contiki_argc = 0;
-char **contiki_argv;
 
-int
-main(int argc, char **argv)
+void contiki_main(void)
 {
 #if UIP_CONF_IPV6
 #if UIP_CONF_IPV6_RPL
@@ -94,10 +91,6 @@ main(int argc, char **argv)
 #else
   printf(CONTIKI_VERSION_STRING " started\n");
 #endif
-
-  /* crappy way of remembering and accessing argc/v */
-  contiki_argc = argc;
-  contiki_argv = argv;
 
   process_init();
   process_start(&etimer_process, NULL);
@@ -144,8 +137,6 @@ main(int argc, char **argv)
     etimer_request_poll();
 
   }
-
-  return 0;
 }
 /*---------------------------------------------------------------------------*/
 void
