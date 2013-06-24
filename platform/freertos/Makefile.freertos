@@ -26,6 +26,9 @@ CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
 # Master clock frequency
 MCK=32000000
 
+# Seems to be application-specific, but let's have it here anyway
+CFLAGS+=-DAUTOSTART_ENABLE
+
 OPENCM3_BASE=libopencm3
 OPENCM3_FAMILY=STM32F4
 LINKERSCRIPT=stm32/f4/stm32f405x6.ld
