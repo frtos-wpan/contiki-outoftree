@@ -1,2 +1,8 @@
 #!/bin/sh
-make -C ../.. TARGET=freertos "$@"
+if [ "$1" = -a ]; then
+	shift
+	make -C ../.. TARGET=freertos foo.co "$@"
+	make -C ../.. TARGET=freertos contiki-freertos.a "$@"
+else
+	make -C ../.. TARGET=freertos "$@"
+fi
