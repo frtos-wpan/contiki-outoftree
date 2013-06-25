@@ -7,8 +7,9 @@
 ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -march=armv7e-m \
              -mfloat-abi=hard -mfpu=fpv4-sp-d16
 
+STM32OCM3 = clock.c
 TARGETLIBS = random.c
 
-CONTIKI_TARGET_SOURCEFILES += $(STM32OCM3) $(TARGETLIBS)
+CONTIKI_TARGET_SOURCEFILES += $(TARGETLIBS)
 
 PREFIX = arm-none-eabi

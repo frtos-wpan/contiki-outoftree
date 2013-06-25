@@ -26,11 +26,7 @@ CFLAGS+=-DAUTOSTART_ENABLE
 
 include platform/$(TARGET)/cpu/cm4.mk
 
-# ----- Makefile.stm32-ocm3 ---------------------------------------------------
-
-# Adapted from Makefile.stm32f103
-# This makefile should work for any chip supported by libopencm3,
-# but is particularly known to work for stm32f107 and l151
+# ----- Items picked from Makefile.stm32-ocm3 ---------------------------------
 
 ### CPU-dependent cleanup files
 CLEAN += symbols.c symbols.h *.d *.elf
@@ -58,8 +54,6 @@ CFLAGSNO = -I. -I$(CONTIKI)/core -I$(CONTIKI_CPU) \
 CFLAGS  += $(CONTIKI_CFLAGS) $(CFLAGSNO) -Os
 
 LDFLAGS = $(error FreeRTOS build does not produce executable)
-
-CDEPFLAGS = $(CFLAGS) -D __MAKING_DEPS__
 
 ### Setup directory search path for source files
 
@@ -89,10 +83,6 @@ clean_cpu:
 	-rm -rf $(BUILTSRCDIR)
 
 # -----------------------------------------------------------------------------
-
-STM32OCM3 = clock.c
-
-#####  End STM32F407  #########################################################
 
 ### Define the CPU directory
 CONTIKI_CPU=./cpu/freertos
