@@ -26,8 +26,6 @@ CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
 # Seems to be application-specific, but let's have it here anyway
 CFLAGS+=-DAUTOSTART_ENABLE
 
-OPENCM3_BASE=libopencm3
-OPENCM3_FAMILY=STM32F4
 LINKERSCRIPT=stm32/f4/stm32f405x6.ld
 
 ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -march=armv7e-m \
@@ -38,20 +36,6 @@ ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -march=armv7e-m \
 # Adapted from Makefile.stm32f103
 # This makefile should work for any chip supported by libopencm3,
 # but is particularly known to work for stm32f107 and l151
-
-### libopencm3 specifics
-OPENCM3_BASE?=
-OPENCM3_FAMILY?=STM32F1
-
-ifndef OPENCM3_BASE
-$(error OPENCM3_BASE not defined. Please set definition to root of libopencm3)
-endif
-ifndef OPENCM3_FAMILY
-$(error OPENCM3_FAMILY not defined. Please set definition to, eg: STM32F1 or STM32L1 or ???)
-endif
-
-xOPENCM3_LIB:=$(shell echo $(OPENCM3_FAMILY) | tr '[:upper:]' '[:lower:]')
-OPENCM3_LIB:=opencm3_$(xOPENCM3_LIB)
 
 ### Code common for all ARM CPUs
 
@@ -67,14 +51,6 @@ CONTIKI_CPU=$(CONTIKI_CPU_ARM)/stm32-ocm3
 ### Define the source files we have in this port
 
 CONTIKI_CPU_DIRS = .
-
-STM32OCM3 = clock.c util.c uip-log.c
-
-#Using the opencm3 usb library for now
-#include $(CONTIKI_CPU_ARM_COMMON)/usb/Makefile.usb
-
-#No SD support for now...This is a TODO
-#include $(CONTIKI_CPU_ARM_COMMON)/SD-card/Makefile.sdcard
 
 TARGETLIBS = random.c
 
@@ -117,19 +93,16 @@ endif
 #CONTIKI_CFLAGS = -DWITH_UIP -DWITH_ASCII
 
 CFLAGSNO = -I. -I$(CONTIKI)/core -I$(CONTIKI_CPU) \
-	   -I$(OPENCM3_BASE)/include \
            -I$(CONTIKI)/platform/$(TARGET) \
            ${addprefix -I,$(APPDIRS)} \
            -DSUBTARGET=$(SUBTARGET) \
-           -Wall $(ARCH_FLAGS) -ggdb3 -D$(OPENCM3_FAMILY) -MD
+           -Wall $(ARCH_FLAGS) -ggdb3 -MD
 
 CFLAGS  += $(CONTIKI_CFLAGS) $(CFLAGSNO) -Os
 
 LDFLAGS += -L $(CONTIKI_CPU) -T $(LINKERSCRIPT) \
 	   -Wl,--start-group -lc -lgcc -Wl,--end-group\
 	   -nostartfiles -Wl,--gc-sections $(ARCH_FLAGS)
-
-EXTERN_LIBS += -L $(OPENCM3_BASE)/lib -l$(OPENCM3_LIB)
 
 CDEPFLAGS = $(CFLAGS) -D __MAKING_DEPS__
 
