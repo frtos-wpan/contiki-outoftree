@@ -24,8 +24,7 @@ CONTIKI_TARGET_SOURCEFILES = contiki-main.c clock.c irq.c leds.c
 # Seems to be application-specific, but let's have it here anyway
 CFLAGS+=-DAUTOSTART_ENABLE
 
-ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -march=armv7e-m \
-             -mfloat-abi=hard -mfpu=fpv4-sp-d16
+include platform/$(TARGET)/cpu/cm4.mk
 
 # ----- Makefile.stm32-ocm3 ---------------------------------------------------
 
@@ -40,13 +39,7 @@ CLEAN += symbols.c symbols.h *.d *.elf
 
 CONTIKI_CPU_DIRS = .
 
-TARGETLIBS = random.c
-
-CONTIKI_TARGET_SOURCEFILES += $(STM32OCM3) $(TARGETLIBS)
-
 CONTIKI_SOURCEFILES        += $(CONTIKI_TARGET_SOURCEFILES)
-
-PREFIX = arm-none-eabi
 
 ### Compiler definitions
 CC       = $(PREFIX)-gcc
