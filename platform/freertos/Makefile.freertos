@@ -66,24 +66,7 @@ NM       = $(PREFIX)-nm
 OBJCOPY  = $(PREFIX)-objcopy
 STRIP    = $(PREFIX)-strip
 
-XSLTPROC=xsltproc
-
 PROJECT_OBJECTFILES += ${addprefix $(OBJECTDIR)/,$(CONTIKI_TARGET_MAIN:.c=.o)}
-
-# DFU-UTIL program upload
-DFU_UTIL=dfu-util
-DFU_UTIL_OFFSET=0x08000000
-
-# Use dfu-util by default
-PROG=dfuutil
-
-ifndef ARCH_FLAGS
-$(warning defaulting ARCH_FLAGS to cortex M3, hope that is what you wanted!)
-ARCH_FLAGS = -mcpu=cortex-m3 -mthumb
-endif
-
-
-#CONTIKI_CFLAGS = -DWITH_UIP -DWITH_ASCII
 
 CFLAGSNO = -I. -I$(CONTIKI)/core -I$(CONTIKI_CPU) \
            -I$(CONTIKI)/platform/$(TARGET) \
