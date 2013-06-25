@@ -23,9 +23,6 @@ CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
 
 #####  STM32F407  #############################################################
 
-# Master clock frequency
-MCK=32000000
-
 # Seems to be application-specific, but let's have it here anyway
 CFLAGS+=-DAUTOSTART_ENABLE
 
@@ -51,9 +48,6 @@ $(error OPENCM3_BASE not defined. Please set definition to root of libopencm3)
 endif
 ifndef OPENCM3_FAMILY
 $(error OPENCM3_FAMILY not defined. Please set definition to, eg: STM32F1 or STM32L1 or ???)
-endif
-ifndef MCK
-$(error MCK not defined.  Please set definition to CPU speed, eg: 72000000)
 endif
 
 xOPENCM3_LIB:=$(shell echo $(OPENCM3_FAMILY) | tr '[:upper:]' '[:lower:]')
@@ -126,7 +120,7 @@ CFLAGSNO = -I. -I$(CONTIKI)/core -I$(CONTIKI_CPU) \
 	   -I$(OPENCM3_BASE)/include \
            -I$(CONTIKI)/platform/$(TARGET) \
            ${addprefix -I,$(APPDIRS)} \
-           -DMCK=$(MCK) -DSUBTARGET=$(SUBTARGET) \
+           -DSUBTARGET=$(SUBTARGET) \
            -Wall $(ARCH_FLAGS) -ggdb3 -D$(OPENCM3_FAMILY) -MD
 
 CFLAGS  += $(CONTIKI_CFLAGS) $(CFLAGSNO) -Os
