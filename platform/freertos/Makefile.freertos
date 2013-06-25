@@ -35,16 +35,8 @@ ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -march=armv7e-m \
 # This makefile should work for any chip supported by libopencm3,
 # but is particularly known to work for stm32f107 and l151
 
-### Code common for all ARM CPUs
-
-CONTIKI_CPU_ARM=$(CONTIKI)/cpu/arm
-CONTIKI_CPU_ARM_COMMON=$(CONTIKI_CPU_ARM)/common
-
 ### CPU-dependent cleanup files
 CLEAN += symbols.c symbols.h *.d *.elf
-
-### Define the CPU directory
-CONTIKI_CPU=$(CONTIKI_CPU_ARM)/stm32-ocm3
 
 ### Define the source files we have in this port
 
