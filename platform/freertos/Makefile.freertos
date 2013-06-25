@@ -38,10 +38,10 @@ CONTIKI_CPU_DIRS = .
 CONTIKI_SOURCEFILES        += $(CONTIKI_TARGET_SOURCEFILES)
 
 ### Compiler definitions
-CC       = $(PREFIX)-gcc
-AS       = $(PREFIX)-as
-AR       = $(PREFIX)-ar
-NM       = $(PREFIX)-nm
+CC       = $(PREFIX)gcc
+AS       = $(PREFIX)as
+AR       = $(PREFIX)ar
+NM       = $(PREFIX)nm
 
 PROJECT_OBJECTFILES += ${addprefix $(OBJECTDIR)/,$(CONTIKI_TARGET_MAIN:.c=.o)}
 

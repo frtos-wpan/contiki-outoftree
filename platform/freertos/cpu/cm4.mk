@@ -12,4 +12,4 @@ TARGETLIBS = random.c
 
 CONTIKI_TARGET_SOURCEFILES += $(TARGETLIBS)
 
-PREFIX = arm-none-eabi
+PREFIX = arm-none-eabi-
