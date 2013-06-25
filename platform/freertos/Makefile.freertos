@@ -17,8 +17,6 @@ CONTIKI_TARGET_MAIN = ${addprefix $(OBJECTDIR)/,contiki-main.o}
 
 CONTIKI_TARGET_SOURCEFILES = contiki-main.c clock.c irq.c leds.c
 
-CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
-
 .SUFFIXES:
 
 #####  STM32F407  #############################################################
