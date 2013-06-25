@@ -60,7 +60,6 @@ PREFIX = arm-none-eabi
 
 ### Compiler definitions
 CC       = $(PREFIX)-gcc
-LD       = $(PREFIX)-ld
 AS       = $(PREFIX)-as
 AR       = $(PREFIX)-ar
 NM       = $(PREFIX)-nm
@@ -94,9 +93,7 @@ CFLAGSNO = -I. -I$(CONTIKI)/core -I$(CONTIKI_CPU) \
 
 CFLAGS  += $(CONTIKI_CFLAGS) $(CFLAGSNO) -Os
 
-LDFLAGS += -L $(CONTIKI_CPU) \
-	   -Wl,--start-group -lc -lgcc -Wl,--end-group\
-	   -nostartfiles -Wl,--gc-sections $(ARCH_FLAGS)
+LDFLAGS = $(error FreeRTOS build does not produce executable)
 
 CDEPFLAGS = $(CFLAGS) -D __MAKING_DEPS__
 
@@ -111,12 +108,6 @@ $(OBJECTDIR)/%.o: %.S
 	$(CC) $(CFLAGS) $< -c  -o $@
 
 
-CUSTOM_RULE_C_TO_CE=yes
-
-%.ce: %.o
-	$(LD) $(LDFLAGS) --relocatable -T $(CONTIKI_CPU)/merge-rodata.ld $< -o $@
-	$(STRIP) -K _init -K _fini --strip-unneeded -g -x $@
-
 CUSTOM_RULE_LINK=yes
 
 %-stripped.o: %.c
@@ -129,9 +120,6 @@ CUSTOM_RULE_LINK=yes
 %.o: ${CONTIKI_TARGET}/loader/%.S
 	$(AS) -o $(notdir $(<:.S=.o)) $<
 
-%-nosyms.$(TARGET): %.co $(PROJECT_OBJECTFILES) contiki-$(TARGET).a # $(OBJECTDIR)/empty-symbols.o
-	$(CC) $(LDFLAGS) $(CFLAGS) -nostartfiles -o $@ $(filter-out %.a,$^) $(filter %.a,$^) -lc $(filter %.a,$^) $(EXTERN_LIBS)
-
 
 %.ihex: %.$(TARGET)
 	$(OBJCOPY) $^ -O ihex $@
@@ -141,9 +129,6 @@ CUSTOM_RULE_LINK=yes
  
 .PHONY: symbols.c
 ifdef CORE
-%.$(TARGET): %.co $(PROJECT_OBJECTFILES) contiki-$(TARGET).a $(STARTUP) $(OBJECTDIR)/symbols.o
-	$(CC) $(LDFLAGS) $(CFLAGS) -nostartfiles -o $@ $(filter-out %.a,$^) $(filter %.a,$^) -lc $(filter %.a,$^)
-
 symbols.c: $(CORE)
 	$(NM) $< | awk -f $(CONTIKI_CPU)/builtins.awk -f ../../tools/mknmlist > symbols.c
 
