@@ -2,6 +2,10 @@ ifndef CONTIKI
   $(error CONTIKI not defined! You must specify where CONTIKI resides!)
 endif
 
+ifndef CONTIKI_TARGET_CPU
+  $(error CONTIKI_TARGET_CPU not defined)
+endif
+
 FREERTOS = $(shell pwd)/../freertos
 # the items below should come from FreeRTOS (if we kick off the build from
 # there)
@@ -24,7 +28,7 @@ CONTIKI_TARGET_SOURCEFILES = contiki-main.c clock.c irq.c leds.c
 # Seems to be application-specific, but let's have it here anyway
 CFLAGS+=-DAUTOSTART_ENABLE
 
-include platform/$(TARGET)/cpu/cm4.mk
+include platform/$(TARGET)/cpu/$(CONTIKI_TARGET_CPU).mk
 
 # ----- Items picked from Makefile.stm32-ocm3 ---------------------------------
 

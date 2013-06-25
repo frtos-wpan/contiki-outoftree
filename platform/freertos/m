@@ -1,8 +1,10 @@
 #!/bin/sh
+opts="TARGET=freertos CONTIKI_TARGET_CPU=cm4"
+
 if [ "$1" = -a ]; then
 	shift
-	make -C ../.. TARGET=freertos foo.co "$@"
-	make -C ../.. TARGET=freertos contiki-freertos.a "$@"
+	make -C ../.. $opts foo.co "$@"
+	make -C ../.. $opts contiki-freertos.a "$@"
 else
-	make -C ../.. TARGET=freertos "$@"
+	make -C ../.. $opts "$@"
 fi
