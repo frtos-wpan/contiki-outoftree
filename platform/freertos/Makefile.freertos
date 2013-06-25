@@ -79,12 +79,6 @@ $(OBJECTDIR)/%.o: %.S
 	$(CC) $(CFLAGS) $< -c  -o $@
 
 
-CUSTOM_RULE_LINK=yes
-
-%.o: ${CONTIKI_TARGET}/loader/%.S
-	$(AS) -o $(notdir $(<:.S=.o)) $<
-
-
 .PHONY: symbols.c
 ifdef CORE
 symbols.c: $(CORE)
@@ -95,10 +89,6 @@ endif
 empty-symbols.c:
 	cp ${CONTIKI}/tools/empty-symbols.c symbols.c
 	cp ${CONTIKI}/tools/empty-symbols.h symbols.h
-
-# Don't use core/loader/elfloader.c, use elfloader-otf.c instead
-$(OBJECTDIR)/elfloader.o:
-	echo -n >$@
 
 clean: clean_cpu
 
