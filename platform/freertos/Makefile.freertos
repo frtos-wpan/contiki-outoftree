@@ -121,20 +121,11 @@ CUSTOM_RULE_LINK=yes
 	$(AS) -o $(notdir $(<:.S=.o)) $<
 
 
-%.ihex: %.$(TARGET)
-	$(OBJCOPY) $^ -O ihex $@
-
-%.bin: %.$(TARGET)
-	$(OBJCOPY) -O binary $< $@
- 
 .PHONY: symbols.c
 ifdef CORE
 symbols.c: $(CORE)
 	$(NM) $< | awk -f $(CONTIKI_CPU)/builtins.awk -f ../../tools/mknmlist > symbols.c
 
-else
-%.$(TARGET): %-nosyms.$(TARGET)
-	ln -sf $< $@
 endif
 
 empty-symbols.c:
@@ -149,8 +140,6 @@ clean: clean_cpu
 
 clean_cpu:
 	-rm -rf $(BUILTSRCDIR)
-
-.PRECIOUS: %-nosyms.$(TARGET)
 
 # -----------------------------------------------------------------------------
 
