@@ -33,8 +33,6 @@ CLEAN += symbols.c symbols.h *.d *.elf
 
 ### Define the source files we have in this port
 
-CONTIKI_CPU_DIRS = .
-
 CONTIKI_SOURCEFILES        += $(CONTIKI_TARGET_SOURCEFILES)
 
 ### Compiler definitions
@@ -53,10 +51,9 @@ CFLAGSNO = -I. -I$(CONTIKI)/core -I$(CONTIKI_CPU) \
 
 CFLAGS  += $(CONTIKI_CFLAGS) $(CFLAGSNO) -Os
 
-LDFLAGS = $(error FreeRTOS build does not produce executable)
+LDFLAGS = $(error FreeRTOS build is not meant not produce executables)
 
 ### Setup directory search path for source files
-
 
 CUSTOM_RULE_S_TO_OBJECTDIR_O = yes
 %.o: %.S
