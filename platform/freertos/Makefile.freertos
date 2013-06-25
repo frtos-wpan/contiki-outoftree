@@ -26,8 +26,6 @@ CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
 # Seems to be application-specific, but let's have it here anyway
 CFLAGS+=-DAUTOSTART_ENABLE
 
-LINKERSCRIPT=stm32/f4/stm32f405x6.ld
-
 ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -march=armv7e-m \
              -mfloat-abi=hard -mfpu=fpv4-sp-d16
 
@@ -73,10 +71,6 @@ XSLTPROC=xsltproc
 
 PROJECT_OBJECTFILES += ${addprefix $(OBJECTDIR)/,$(CONTIKI_TARGET_MAIN:.c=.o)}
 
-ifndef LINKERSCRIPT
-$(warning no LINKERSCRIPT provided, this is probably not going to end well)
-endif
-
 # DFU-UTIL program upload
 DFU_UTIL=dfu-util
 DFU_UTIL_OFFSET=0x08000000
@@ -100,7 +94,7 @@ CFLAGSNO = -I. -I$(CONTIKI)/core -I$(CONTIKI_CPU) \
 
 CFLAGS  += $(CONTIKI_CFLAGS) $(CFLAGSNO) -Os
 
-LDFLAGS += -L $(CONTIKI_CPU) -T $(LINKERSCRIPT) \
+LDFLAGS += -L $(CONTIKI_CPU) \
 	   -Wl,--start-group -lc -lgcc -Wl,--end-group\
 	   -nostartfiles -Wl,--gc-sections $(ARCH_FLAGS)
 
