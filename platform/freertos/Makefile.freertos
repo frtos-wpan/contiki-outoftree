@@ -55,8 +55,6 @@ CC       = $(PREFIX)-gcc
 AS       = $(PREFIX)-as
 AR       = $(PREFIX)-ar
 NM       = $(PREFIX)-nm
-OBJCOPY  = $(PREFIX)-objcopy
-STRIP    = $(PREFIX)-strip
 
 PROJECT_OBJECTFILES += ${addprefix $(OBJECTDIR)/,$(CONTIKI_TARGET_MAIN:.c=.o)}
 
@@ -84,13 +82,6 @@ $(OBJECTDIR)/%.o: %.S
 
 
 CUSTOM_RULE_LINK=yes
-
-%-stripped.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-	$(STRIP) --strip-unneeded -g -x $@
-
-%-stripped.o: %.o
-	$(STRIP) --strip-unneeded -g -x -o $@ $<
 
 %.o: ${CONTIKI_TARGET}/loader/%.S
 	$(AS) -o $(notdir $(<:.S=.o)) $<
