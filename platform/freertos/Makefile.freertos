@@ -105,6 +105,21 @@ clean: clean_cpu
 clean_cpu:
 	-rm -rf $(BUILTSRCDIR)
 
+# ----- Special stuff for rf230bb ---------------------------------------------
+
+MKHALH = platform/stm32-e407/mkhalh
+MKRF230BB = platform/stm32-e407/mkrf230bb
+
+hal.h:		$(CONTIKI)/cpu/avr/radio/rf230bb/hal.h $(MKHALH)
+		$(MKHALH) <$< >$@ || { rm -f $@; exit 1; }
+
+rf230bb.c:	hal.h
+
+rf230bb.c:	$(CONTIKI)/cpu/avr/radio/rf230bb/rf230bb.c $(MKRF230BB)
+		$(MKRF230BB) <$< >$@ || { rm -f $@; exit 1; }
+
+CLEAN += hal.h rf230bb.c
+
 # -----------------------------------------------------------------------------
 
 ### Define the CPU directory

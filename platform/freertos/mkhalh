@@ -1,0 +1,67 @@
+#!/bin/sh
+#
+# mkhalh - Extract the useful bits of rf230bb/hal.h
+#
+# Developed by Werner Almesberger for Actility S.A., and
+# licensed under LGPLv2 by Actility S.A.
+#
+
+#
+# The first sed line removes things related to the 128RFA1, because some
+# declarations clash with the rest. The /#e/ matches #endif and #else.
+#
+# The second line
+# - preserves anything containing HAL_MAX, i.e., HAL_MAX_FRAME_LENGTH,
+#
+# The third line
+# - preserves the definition of RF230_CONF_RX_BUFFERS
+#
+# The fourth line
+# - removes all CPP directives, e.g., the bothersome platform check, and
+# - removes all single-line comments, so one can actually read the file
+#
+
+cat <<EOF
+/* MACHINE-GENERATED. DO NOT EDIT ! */
+
+#ifndef HAL_H
+#define HAL_H
+
+#include <stdbool.h>
+
+void hal_set_rst_low(void);
+void hal_set_rst_high(void);
+void hal_set_slptr_high(void);
+void hal_set_slptr_low(void);
+bool hal_get_slptr(void);
+
+#define	HAL_ENTER_CRITICAL_REGION()	do {} while (0)
+#define	HAL_LEAVE_CRITICAL_REGION()	do {} while (0)
+
+#define	cli()				do {} while (0)
+
+unsigned char SREG;
+
+
+/*
+ * @@@ The loop in delay_us only works if the system clock is 48 MHz !
+ */
+
+static inline void delay_us(unsigned n)
+{
+	unsigned i = n*12;
+
+	while (i--)
+		asm("");
+}
+EOF
+
+sed -e '/#if.*__AVR_ATmega128RFA1__/,/^#e/d' \
+    -e '/HAL_MAX/{p;d;}' \
+    -e '/#if.*RF230_CONF_RX_BUFFERS/,/#endif/{p;d;}' \
+    -e '/^#/d;/^\/\//d' ||
+    { rm -f $OUT; exit 1; }
+
+cat <<EOF
+#endif /* HAL_H */
+EOF
