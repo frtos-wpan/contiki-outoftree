@@ -24,10 +24,10 @@ CONTIKI_TARGET_SOURCEFILES += hal.c rf230bb.c
 CLEAN += *.stm-e407
 CLEAN += hal.h rf230bb.c
 
+include $(CONTIKI)/cpu/arm/stm32-ocm3/Makefile.stm32-ocm3
+
 ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -march=armv7e-m \
              -mfloat-abi=hard -mfpu=fpv4-sp-d16
-
-include $(CONTIKI)/cpu/arm/stm32-ocm3/Makefile.stm32-ocm3
 
 MKHALH = platform/stm32-e407/mkhalh
 MKRF230BB = platform/stm32-e407/mkrf230bb
