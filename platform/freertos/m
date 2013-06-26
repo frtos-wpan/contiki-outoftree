@@ -1,5 +1,9 @@
 #!/bin/sh
+frtos=`pwd`/../../../freertos
 opts="TARGET=freertos CONTIKI_TARGET_CPU=cm4"
+opts="$opts FREERTOS=$frtos"
+opts="$opts FREERTOS_TARGET=$frtos/FreeRTOS/Demo/E407"
+opts="$opts FREERTOS_PORTABLE=$frtos/FreeRTOS/Source/portable/GCC/ARM_CM4F"
 
 if [ "$1" = -a ]; then
 	shift
