@@ -35,12 +35,17 @@ void hal_set_slptr_high(void);
 void hal_set_slptr_low(void);
 bool hal_get_slptr(void);
 
-#define	HAL_ENTER_CRITICAL_REGION()	do {} while (0)
-#define	HAL_LEAVE_CRITICAL_REGION()	do {} while (0)
+/*
+ * We don't use macros but function calls for HAL_ENTER_CRITICAL_REGION and
+ * HAL_LEAVE_CRITICAL_REGION since the corresponding FreeRTOS macros aren't
+ * available when we compile Contiki.
+ *
+ * Alternatively, we could call the functions the FreeRTOS macros eventually
+ * call, but this would no longer be portable.
+ */
 
-#define	cli()				do {} while (0)
-
-unsigned char SREG;
+void HAL_ENTER_CRITICAL_REGION(void);
+void HAL_LEAVE_CRITICAL_REGION(void);
 
 
 /*

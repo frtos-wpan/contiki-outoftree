@@ -14,4 +14,8 @@ cat <<EOF
 
 EOF
 sed -e 's|"rf230bb.h"|"platform/stm32-e407/rf230bb.h"|' \
+    -e '/^ *\/\//n;' \
+    -e 's/^.*\<cli(.*/{HAL_ENTER_CRITICAL_REGION();/' \
+    -e 's/^ *SREG *=.*/HAL_LEAVE_CRITICAL_REGION();}/' \
+    -e 's/uint8_t.*= SREG;//' \
     -e 's/DEBUG 0/DEBUG 1/'
