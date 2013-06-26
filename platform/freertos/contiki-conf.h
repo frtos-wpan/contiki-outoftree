@@ -66,25 +66,14 @@ typedef unsigned short uip_stats_t;
 #define NETSTACK_CONF_RDC_CHANNEL_CHECK_RATE 8
 #endif /* NETSTACK_CONF_RDC_CHANNEL_CHECK_RATE */
 
+#define NETSTACK_CONF_MAC     nullmac_driver
+#define NETSTACK_CONF_RDC     sicslowmac_driver
+#define NETSTACK_CONF_RADIO   rf230_driver
+#define NETSTACK_CONF_FRAMER  framer_802154
+
 #if UIP_CONF_IPV6
 
 #define RIMEADDR_CONF_SIZE              8
-
-#ifndef NETSTACK_CONF_MAC
-#define NETSTACK_CONF_MAC     nullmac_driver
-#endif /* NETSTACK_CONF_MAC */
-
-#ifndef NETSTACK_CONF_RDC
-#define NETSTACK_CONF_RDC     nullrdc_driver
-#endif /* NETSTACK_CONF_RDC */
-
-#ifndef NETSTACK_CONF_RADIO
-#define NETSTACK_CONF_RADIO   nullradio_driver
-#endif /* NETSTACK_CONF_RADIO */
-
-#ifndef NETSTACK_CONF_FRAMER
-#define NETSTACK_CONF_FRAMER  framer_802154
-#endif /* NETSTACK_CONF_FRAMER */
 
 #define NETSTACK_CONF_NETWORK sicslowpan_driver
 
