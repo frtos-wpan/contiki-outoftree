@@ -13,7 +13,7 @@ cat <<EOF
 #define	printf_P	printf
 
 EOF
-sed -e 's|"rf230bb.h"|"platform/stm32-e407/rf230bb.h"|' \
+sed -e 's|"rf230bb.h"|"platform/freertos/rf230bb.h"|' \
     -e '/^ *\/\//n;' \
     -e 's/^.*\<cli(.*/{HAL_ENTER_CRITICAL_REGION();/' \
     -e 's/^ *SREG *=.*/HAL_LEAVE_CRITICAL_REGION();}/' \
