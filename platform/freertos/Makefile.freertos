@@ -107,8 +107,8 @@ clean_cpu:
 
 # ----- Special stuff for rf230bb ---------------------------------------------
 
-MKHALH = platform/stm32-e407/mkhalh
-MKRF230BB = platform/stm32-e407/mkrf230bb
+MKHALH = platform/freertos/mkhalh
+MKRF230BB = platform/freertos/mkrf230bb
 
 hal.h:		$(CONTIKI)/cpu/avr/radio/rf230bb/hal.h $(MKHALH)
 		$(MKHALH) <$< >$@ || { rm -f $@; exit 1; }
