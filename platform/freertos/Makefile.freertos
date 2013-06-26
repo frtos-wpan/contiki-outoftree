@@ -6,11 +6,32 @@ ifndef CONTIKI_TARGET_CPU
   $(error CONTIKI_TARGET_CPU not defined)
 endif
 
-FREERTOS = $(shell pwd)/../freertos
-# the items below should come from FreeRTOS (if we kick off the build from
-# there)
-FREERTOS_TARGET = $(FREERTOS)/FreeRTOS/Demo/E407
-FREERTOS_PORTABLE = $(FREERTOS)/FreeRTOS/Source/portable/GCC/ARM_CM4F
+#
+# The following FREERTOS_* variables have to be provided by the FreeRTOS build
+# that in turn kicks off the Contiki build:
+#
+# FREERTOS 		The FreeRTOS top-level directory.
+#			E.g., $(shell pwd)/../freertos
+#
+# FREERTOS_TARGET	Directory of the user's target-specific build.
+#			E.g., $(FREERTOS)/FreeRTOS/Demo/E407
+#
+# FREERTOS_PORTABLE	Directory of FreeRTOS code specific to the target
+#			architecture, CPU, and toolchain.
+#			E.g., $(FREERTOS)/FreeRTOS/Source/portable/GCC/ARM_CM4F
+#
+
+ifndef FREERTOS
+  $(error FREERTOS not defined)
+endif
+
+ifndef FREERTOS_TARGET
+  $(error FREERTOS_TARGET not defined)
+endif
+
+ifndef FREERTOS_PORTABLE
+  $(error FREERTOS_PORTABLE not defined)
+endif
 
 ifeq ($(UIP_CONF_IPV6),1)
 CFLAGS += -DWITH_UIP6=1
