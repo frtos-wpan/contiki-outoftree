@@ -111,12 +111,12 @@ MKHALH = platform/freertos/mkhalh
 MKRF230BB = platform/freertos/mkrf230bb
 
 hal.h:		$(CONTIKI)/cpu/avr/radio/rf230bb/hal.h $(MKHALH)
-		$(MKHALH) <$< >$@ || { rm -f $@; exit 1; }
+		$(MKHALH) $< >$@ || { rm -f $@; exit 1; }
 
 rf230bb.c:	hal.h
 
 rf230bb.c:	$(CONTIKI)/cpu/avr/radio/rf230bb/rf230bb.c $(MKRF230BB)
-		$(MKRF230BB) <$< >$@ || { rm -f $@; exit 1; }
+		$(MKRF230BB) $< >$@ || { rm -f $@; exit 1; }
 
 CLEAN += hal.h rf230bb.c
 

@@ -7,7 +7,12 @@
 #
 
 cat <<EOF
-/* MACHINE-GENERATED. DO NOT EDIT ! */
+/*
+ * MACHINE-GENERATED. DO NOT EDIT !
+ *
+ * Generator:		$0
+ * Original file:	$1
+ */
 
 #define	PSTR(s)		s
 #define	printf_P	printf
@@ -18,4 +23,5 @@ sed -e 's|"rf230bb.h"|"platform/freertos/rf230bb.h"|' \
     -e 's/^.*\<cli(.*/{HAL_ENTER_CRITICAL_REGION();/' \
     -e 's/^ *SREG *=.*/HAL_LEAVE_CRITICAL_REGION();}/' \
     -e 's/uint8_t.*= SREG;//' \
-    -e 's/DEBUG 0/DEBUG 1/'
+    -e 's/DEBUG 0/DEBUG 1/' \
+    "$1"

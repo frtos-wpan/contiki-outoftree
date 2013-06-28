@@ -22,7 +22,12 @@
 #
 
 cat <<EOF
-/* MACHINE-GENERATED. DO NOT EDIT ! */
+/*
+ * MACHINE-GENERATED. DO NOT EDIT !
+ *
+ * Generator:		$0
+ * Original file:	$1
+ */
 
 #ifndef HAL_H
 #define HAL_H
@@ -64,7 +69,8 @@ EOF
 sed -e '/#if.*__AVR_ATmega128RFA1__/,/^#e/d' \
     -e '/HAL_MAX/{p;d;}' \
     -e '/#if.*RF230_CONF_RX_BUFFERS/,/#endif/{p;d;}' \
-    -e '/^#/d;/^\/\//d'
+    -e '/^#/d;/^\/\//d' \
+    "$1"
 
 cat <<EOF
 #endif /* HAL_H */
