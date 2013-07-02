@@ -35,7 +35,15 @@ MKRF230BB = platform/stm32-e407/mkrf230bb
 hal.h:		contiki/cpu/avr/radio/rf230bb/hal.h $(MKHALH)
 		$(MKHALH) <$< >$@ || { rm -f $@; exit 1; }
 
-hal.c:		hal.h
+#
+# We need to use this awkward path got hal.c because that's what vpath
+# produces. We can't use just hal.c, since this would get the dependency right
+# but it would also trick vpath into assuming there'a a top-level hal.c it can
+# use, while there isn't really such a file.
+#
+
+platform/stm32-e407/./hal.c: hal.h
+
 rf230bb.c:	hal.h
 
 rf230bb.c:	$(CONTIKI)/cpu/avr/radio/rf230bb/rf230bb.c $(MKRF230BB)
