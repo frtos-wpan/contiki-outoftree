@@ -51,7 +51,7 @@ clock_time(void)
 unsigned long
 clock_seconds(void)
 {
-  return xTaskGetTickCountFromISR() / 1000; /* @@@@ */
+  return xTaskGetTickCountFromISR() / configTICK_RATE_HZ;
 }
 /*---------------------------------------------------------------------------*/
 void
