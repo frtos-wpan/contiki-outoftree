@@ -58,11 +58,10 @@ PROCESS_THREAD(foo_process, ev, data)
   serial_shell_init();
   shell_ps_init();
   shell_blink_init();
+  shell_ping_init();
   shell_powertrace_init();
-  shell_rime_debug_init();
-  shell_rime_ping_init(); /* Rime ping */
   shell_rime_sniff_init();
-  shell_rime_init();
+  shell_time_init();
 #if 0
   static struct blipper_info bl1 = { CLOCK_SECOND * 2, 'a' };
   static struct blipper_info bl2 = { CLOCK_SECOND * 5, 'b' };
