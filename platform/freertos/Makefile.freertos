@@ -105,6 +105,13 @@ clean: clean_cpu
 clean_cpu:
 	-rm -rf $(BUILTSRCDIR)
 
+# ----- Network settings ------------------------------------------------------
+
+CFLAGS += -DRF_CHANNEL=$(RF_CHANNEL)
+CFLAGS += -DPAN_ADDR=$(PAN_ADDR)
+CFLAGS += -DSHORT_ADDR=$(SHORT_ADDR)
+CFLAGS += -DLONG_ADDR="$(LONG_ADDR)"
+
 # ----- Special stuff for rf230bb ---------------------------------------------
 
 MKHALH = platform/freertos/mkhalh

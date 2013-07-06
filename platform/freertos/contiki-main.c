@@ -47,8 +47,19 @@
 
 #include "net/rime.h"
 
-static uint8_t serial_id[] = {0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08};
-static uint16_t node_id = 0x0102;
+
+/*
+ * We deliberately don't use defaults here. If someone doesn't set a value,
+ * they get a compile-time error, which will make it clear that something is
+ * missing, and where it is. This will probably save them a lot of time
+ * trying to figure out where all these strange values come from.
+ */
+ 
+const static uint8_t rf_channel = RF_CHANNEL;
+const static uint16_t pan_addr = PAN_ADDR;
+const static uint16_t short_addr = SHORT_ADDR;
+const static uint8_t long_addr[8] = { LONG_ADDR };
+
 /*---------------------------------------------------------------------------*/
 static void
 set_rime_addr(void)
@@ -58,11 +69,11 @@ set_rime_addr(void)
 
   memset(&addr, 0, sizeof(rimeaddr_t));
 #if UIP_CONF_IPV6
-  memcpy(addr.u8, serial_id, sizeof(addr.u8));
+  memcpy(addr.u8, long_addr, sizeof(addr.u8));
 #else
   if(node_id == 0) {
     for(i = 0; i < sizeof(rimeaddr_t); ++i) {
-      addr.u8[i] = serial_id[7 - i];
+      addr.u8[i] = long_addr[7 - i];
     }
   } else {
     addr.u8[0] = node_id & 0xff;
@@ -101,10 +112,15 @@ void contiki_main(void)
   queuebuf_init();
 
   netstack_init();
-  printf("MAC %s RDC %s NETWORK %s\n", NETSTACK_MAC.name, NETSTACK_RDC.name, NETSTACK_NETWORK.name);
+
+  printf("MAC %s RDC %s NETWORK %s\n", NETSTACK_MAC.name, NETSTACK_RDC.name,
+    NETSTACK_NETWORK.name);
+
+  rf230_set_channel(RF_CHANNEL);
+  rf230_set_pan_addr(PAN_ADDR, short_addr, long_addr);
 
 #if WITH_UIP6
-  memcpy(&uip_lladdr.addr, serial_id, sizeof(uip_lladdr.addr));
+  memcpy(&uip_lladdr.addr, long_addr, sizeof(uip_lladdr.addr));
 
   process_start(&tcpip_process, NULL);
   printf("Tentative link-local IPv6 address ");
