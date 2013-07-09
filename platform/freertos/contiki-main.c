@@ -48,6 +48,8 @@
 #include "net/rime.h"
 
 
+extern uint8_t eui64[8];	/* defined by FreeRTOS */
+
 /*
  * We deliberately don't use defaults here. If someone doesn't set a value,
  * they get a compile-time error, which will make it clear that something is
@@ -58,7 +60,6 @@
 const static uint8_t rf_channel = RF_CHANNEL;
 const static uint16_t pan_addr = PAN_ADDR;
 const static uint16_t short_addr = SHORT_ADDR;
-const static uint8_t long_addr[8] = { LONG_ADDR };
 
 /*---------------------------------------------------------------------------*/
 static void
@@ -69,11 +70,11 @@ set_rime_addr(void)
 
   memset(&addr, 0, sizeof(rimeaddr_t));
 #if UIP_CONF_IPV6
-  memcpy(addr.u8, long_addr, sizeof(addr.u8));
+  memcpy(addr.u8, eui64, sizeof(addr.u8));
 #else
   if(node_id == 0) {
     for(i = 0; i < sizeof(rimeaddr_t); ++i) {
-      addr.u8[i] = long_addr[7 - i];
+      addr.u8[i] = eui64[7 - i];
     }
   } else {
     addr.u8[0] = node_id & 0xff;
@@ -117,10 +118,10 @@ void contiki_main(void)
     NETSTACK_NETWORK.name);
 
   rf230_set_channel(RF_CHANNEL);
-  rf230_set_pan_addr(PAN_ADDR, short_addr, long_addr);
+  rf230_set_pan_addr(PAN_ADDR, short_addr, eui64);
 
 #if WITH_UIP6
-  memcpy(&uip_lladdr.addr, long_addr, sizeof(uip_lladdr.addr));
+  memcpy(&uip_lladdr.addr, eui64, sizeof(uip_lladdr.addr));
 
   process_start(&tcpip_process, NULL);
   printf("Tentative link-local IPv6 address ");
