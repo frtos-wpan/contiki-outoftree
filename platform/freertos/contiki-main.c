@@ -46,6 +46,7 @@
 #endif /* WITH_UIP6 */
 
 #include "net/rime.h"
+#include "rf230bb.h"
 
 
 extern uint8_t eui64[8];	/* defined by FreeRTOS */
