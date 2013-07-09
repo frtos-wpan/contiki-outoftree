@@ -44,6 +44,7 @@
 //#include "blipper.h"
 #include "serial-shell.h"
 #include "shell-ps.h"
+#include "shell-wpan.h"
 /*---------------------------------------------------------------------------*/
 PROCESS(foo_process, "Hello world process");
 PROCESS(callback_process, "callback process");
@@ -62,6 +63,7 @@ PROCESS_THREAD(foo_process, ev, data)
   shell_powertrace_init();
   shell_rime_sniff_init();
   shell_time_init();
+  shell_wpan_init();
 #if 0
   static struct blipper_info bl1 = { CLOCK_SECOND * 2, 'a' };
   static struct blipper_info bl2 = { CLOCK_SECOND * 5, 'b' };
