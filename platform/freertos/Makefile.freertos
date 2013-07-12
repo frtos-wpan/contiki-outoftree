@@ -124,6 +124,8 @@ hal.h:		$(CONTIKI)/cpu/avr/radio/rf230bb/hal.h $(MKHALH)
 
 rf230bb.c:	hal.h
 
+platform/freertos/./contiki-main.c: hal.h
+
 rf230bb.c:	$(CONTIKI)/cpu/avr/radio/rf230bb/rf230bb.c $(MKRF230BB)
 		$(MKRF230BB) $< >$@ || { rm -f $@; exit 1; }
 
