@@ -76,7 +76,8 @@ CFLAGSNO = -I. -I$(CONTIKI)/core -I$(CONTIKI_CPU) \
            -DSUBTARGET=$(SUBTARGET) \
            -Wall $(ARCH_FLAGS) -ggdb3 -MD
 
-CFLAGS  += $(CONTIKI_CFLAGS) $(CFLAGSNO) -Os
+CFLAGS += $(CONTIKI_CFLAGS) $(CFLAGSNO) -Os
+CFLAGS += -Wno-strict-aliasing -fno-strict-aliasing
 
 LDFLAGS = $(error FreeRTOS build is not meant not produce executables)
 

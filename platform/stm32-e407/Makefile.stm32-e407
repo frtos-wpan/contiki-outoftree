@@ -26,6 +26,7 @@ CLEAN += hal.h rf230bb.c
 
 ARCH_FLAGS = -mcpu=cortex-m4 -mthumb -march=armv7e-m \
              -mfloat-abi=hard -mfpu=fpv4-sp-d16
+CFLAGS += -Wno-strict-aliasing -fno-strict-aliasing
 
 include $(CONTIKI)/cpu/arm/stm32-ocm3/Makefile.stm32-ocm3
 
