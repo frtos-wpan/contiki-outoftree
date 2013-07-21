@@ -35,17 +35,10 @@
 #include <string.h>
 
 #include "contiki.h"
-#include "net/netstack.h"
+#include "contiki-net.h"
 
 #include "dev/serial-line.h"
 
-#include "net/uip.h"
-
-#if WITH_UIP6
-#include "net/uip-ds6.h"
-#endif /* WITH_UIP6 */
-
-#include "net/rime.h"
 #include "rf230bb.h"
 
 
