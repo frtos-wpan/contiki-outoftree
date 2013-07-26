@@ -1,6 +1,6 @@
 CONTIKI_TARGET_DIRS = . dev ../stm32ldiscovery ../stm32ldiscovery/dev
 # Master clock frequency
-MCK=32000000
+MCK=48000000
 CFLAGS+=-DAUTOSTART_ENABLE
 
 ifndef CONTIKI_TARGET_MAIN
