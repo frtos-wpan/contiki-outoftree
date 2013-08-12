@@ -118,6 +118,7 @@ void contiki_main(void)
   memcpy(&uip_lladdr.addr, eui64, sizeof(uip_lladdr.addr));
 
   process_start(&tcpip_process, NULL);
+  process_start(&resolv_process, NULL);
   printf("Tentative link-local IPv6 address ");
   {
     uip_ds6_addr_t *lladdr;
