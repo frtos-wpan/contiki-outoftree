@@ -63,7 +63,9 @@ PROCESS_THREAD(foo_process, ev, data)
   shell_powertrace_init();
   shell_rime_sniff_init();
   shell_time_init();
+#ifdef HAVE_SHELL_WPAN
   shell_wpan_init();
+#endif
 #if 0
   static struct blipper_info bl1 = { CLOCK_SECOND * 2, 'a' };
   static struct blipper_info bl2 = { CLOCK_SECOND * 5, 'b' };

@@ -42,14 +42,17 @@ CONTIKI_TARGET_MAIN = contiki-main.c
 
 CONTIKI_TARGET_SOURCEFILES += $(CONTIKI_EXTRA_SOURCEFILES)
 CONTIKI_TARGET_SOURCEFILES += contiki-main.c clock.c irq.c leds.c
+
+ifeq ($(USE_SHELL_WPAN),1)
 CONTIKI_TARGET_SOURCEFILES += shell-wpan.c
+endif
 
 .SUFFIXES:
 
 #####  STM32F407  #############################################################
 
 # Seems to be application-specific, but let's have it here anyway
-CFLAGS+=-DAUTOSTART_ENABLE
+CFLAGS += -DAUTOSTART_ENABLE
 
 include platform/$(TARGET)/cpu/$(CONTIKI_TARGET_CPU).mk
 
