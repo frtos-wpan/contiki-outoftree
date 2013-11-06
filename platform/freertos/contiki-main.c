@@ -111,8 +111,10 @@ void contiki_main(void)
   printf("MAC %s RDC %s NETWORK %s\n", NETSTACK_MAC.name, NETSTACK_RDC.name,
     NETSTACK_NETWORK.name);
 
+#ifdef HAVE_RF230
   rf230_set_channel(RF_CHANNEL);
   rf230_set_pan_addr(PAN_ADDR, short_addr, eui64);
+#endif
 
 #if WITH_UIP6
   memcpy(&uip_lladdr.addr, eui64, sizeof(uip_lladdr.addr));
