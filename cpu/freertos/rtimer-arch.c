@@ -1,90 +1,75 @@
 /*
- * Copyright (c) 2007, Swedish Institute of Computer Science.
- * All rights reserved.
+ * rtimer-arch.c - Architecture-specific rtimer support
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the Institute nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE INSTITUTE AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE INSTITUTE OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- * This file is part of the Contiki operating system.
- *
+ * Developed by Werner Almesberger for Actility S.A., and
+ * licensed under LGPLv2 by Actility S.A.
  */
 
-/**
- * \file
- *         Native (non-specific) code for the Contiki real-time module rt
- * \author
- *         Adam Dunkels <adam@sics.se>
- */
 
-#include <stddef.h>
+#include <stdint.h>
 
 #include "sys/rtimer.h"
-#include "sys/clock.h"
+#include "rtimer-arch.h"
 
-#define DEBUG 0
-#if DEBUG
-#include <stdio.h>
-#define PRINTF(...) printf(__VA_ARGS__)
-#else
-#define PRINTF(...)
-#endif
+#include "freertos-task.h"
+#include "freertos-timers.h"
 
-/*---------------------------------------------------------------------------*/
-static void
-interrupt(int sig)
+
+#define	BLOCK_TICKS	100	/* @@@ */
+
+
+rtimer_clock_t rtimer_arch_second;
+static xTimerHandle rtimer;
+
+
+/*
+ * FreeRTOS introduces the novel concept of timers where all operations can
+ * potentially fail. Since we don't even have a way to inform our caller when
+ * something went wrong, we just add a general "panic" function for such cases.
+ */
+
+static void panic(void)
 {
-#if 0
-  signal(sig, interrupt);
-  rtimer_run_next();
-#endif
+	while (1);
 }
-/*---------------------------------------------------------------------------*/
-void
-rtimer_arch_init(void)
+
+
+static void rtimer_handler(xTimerHandle xTimer)
 {
-#if 0
-  signal(SIGALRM, interrupt);
-#endif
+	rtimer_run_next();
 }
-/*---------------------------------------------------------------------------*/
-void
-rtimer_arch_schedule(rtimer_clock_t t)
+
+
+void rtimer_arch_init(void)
 {
-#if 0
-  struct itimerval val;
-  rtimer_clock_t c;
-
-  c = t - (unsigned short)clock_time();
-  
-  val.it_value.tv_sec = c / 1000;
-  val.it_value.tv_usec = (c % 1000) * 1000;
-
-  PRINTF("rtimer_arch_schedule time %u %u in %d.%d seconds\n", t, c, c / 1000,
-	 (c % 1000) * 1000);
-
-  val.it_interval.tv_sec = val.it_interval.tv_usec = 0;
-  setitimer(ITIMER_REAL, &val, NULL);
-#endif
+	rtimer_arch_second = xTaskGetTickCountFromISR();
+	/*
+	 * FreeRTOS has a weird concept of type for "pcTimerName", so we need a
+	 * cast. "const char *" would have done nicely.
+	 */
+	rtimer = xTimerCreate((const signed char * const) "rtimer",
+	    1, pdFALSE, NULL, rtimer_handler);
 }
-/*---------------------------------------------------------------------------*/
+
+
+rtimer_clock_t rtimer_arch_now(void)
+{
+	return xTaskGetTickCountFromISR();
+}
+
+
+void rtimer_arch_schedule(rtimer_clock_t wakeup_time)
+{
+	int32_t d = wakeup_time - xTaskGetTickCountFromISR();
+
+	if (xTimerStop(rtimer, BLOCK_TICKS) == pdFAIL)
+		panic();
+	if (d < 0) {
+		rtimer_run_next();
+		return;
+	}
+	if (xTimerChangePeriod(rtimer, d, BLOCK_TICKS) == pdFAIL)
+		panic();
+	if (xTimerStart(rtimer, BLOCK_TICKS) == pdFAIL)
+		panic();
+}

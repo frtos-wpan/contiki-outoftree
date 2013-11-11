@@ -186,4 +186,13 @@ int strcasecmp(const char*, const char*);
 #include PROJECT_CONF_H
 #endif /* PROJECT_CONF_H */
 
+/*
+ * We need to define RTIMER_CLOCK_LT because core/sys/rtimer.h declares
+ * rtimer_clock_t as "short" (i.e., 16 bits), if we don't. It does this before
+ * including rtimer-arch.h, making contiki-conf.h the only place where we can
+ * avert disaster.
+ */
+
+#define RTIMER_CLOCK_LT(a,b)	((a) < (b))
+
 #endif /* __CONTIKI_CONF_H__ */
