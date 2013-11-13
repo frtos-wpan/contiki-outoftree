@@ -91,6 +91,7 @@ set_locked(struct rtimer *rtimer, rtimer_clock_t time,
   rtimer->time = time;
   rtimer->func = func;
   rtimer->ptr = func;
+  rtimer->cancel = 0;
 
   for (anchor = &next_rtimer; *anchor && RTIMER_CLOCK_LT((*anchor)->time, time);
        anchor = &(*anchor)->next);
@@ -112,7 +113,8 @@ static void next_timer_locked(void)
   while (next_rtimer && !RTIMER_CLOCK_LT(now, next_rtimer->time)) {
     t = next_rtimer;   
     next_rtimer = t->next;
-    t->func(t, t->ptr);
+    if (!t->cancel)
+      t->func(t, t->ptr);
   }
   if (next_rtimer)
     rtimer_arch_schedule(next_rtimer->time);
@@ -148,6 +150,12 @@ rtimer_set(struct rtimer *rtimer, rtimer_clock_t time,
     run_deferred();
   }
   return res;
+}
+/*---------------------------------------------------------------------------*/
+void
+rtimer_cancel(struct rtimer *rtimer)
+{
+  rtimer->cancel = 1;
 }
 /*---------------------------------------------------------------------------*/
 void

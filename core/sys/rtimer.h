@@ -52,6 +52,8 @@
 #ifndef __RTIMER_H__
 #define __RTIMER_H__
 
+#include <stdbool.h>
+
 #include "contiki-conf.h"
 
 #ifndef RTIMER_CLOCK_LT
@@ -85,6 +87,7 @@ struct rtimer {
   rtimer_callback_t func;
   void *ptr;
   struct rtimer *next;
+  bool cancel;
 };
 
 enum {
@@ -110,6 +113,22 @@ enum {
  */
 int rtimer_set(struct rtimer *task, rtimer_clock_t time,
 	       rtimer_clock_t duration, rtimer_callback_t func, void *ptr);
+
+/**
+ * \brief      Cancel a real-time timer.
+ * \param task A pointer to the task variable previously declared with RTIMER_TASK().
+ *
+ *             This function cancels a real-time timer. If the timer is not
+ *             running, it has no effect. If the timer resubmits itself in its
+ *	       handler function, rtimer_cancel will cancel it. If rtimer_cancel
+ *	       is called on a timer that is in the process of being started,
+ *	       the result is undefined.
+ *
+ *	       Known limitation: the rtimer structure of a cancelled timer must
+ *	       not be deallocated or overwritten with something else. Reusing
+ *	       it for another rtimer (through this API) is allowed.
+ */
+void rtimer_cancel(struct rtimer *task);
 
 /**
  * \brief      Execute the next real-time task and schedule the next task, if any
