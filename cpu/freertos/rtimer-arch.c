@@ -7,6 +7,7 @@
 
 
 #include <stdint.h>
+#include <stdio.h>
 
 #include "sys/rtimer.h"
 #include "rtimer-arch.h"
@@ -30,6 +31,7 @@ static xTimerHandle rtimer;
 
 static void panic(void)
 {
+	printf("\nPANIC\n");
 	while (1);
 }
 
