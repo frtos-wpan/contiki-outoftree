@@ -66,7 +66,7 @@ void rtimer_arch_schedule(rtimer_clock_t wakeup_time)
 
 	if (xTimerStop(rtimer, BLOCK_TICKS) == pdFAIL)
 		panic();
-	if (d < 0) {
+	if (d <= 0) {
 		rtimer_run_next();
 		return;
 	}
