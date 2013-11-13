@@ -52,6 +52,8 @@
 #ifndef __RTIMER_H__
 #define __RTIMER_H__
 
+#include <stdbool.h>
+
 #include "contiki-conf.h"
 
 #ifndef RTIMER_CLOCK_LT
@@ -84,13 +86,14 @@ struct rtimer {
   rtimer_clock_t time;
   rtimer_callback_t func;
   void *ptr;
+  struct rtimer *next;
 };
 
 enum {
   RTIMER_OK,
-  RTIMER_ERR_FULL,
-  RTIMER_ERR_TIME,
-  RTIMER_ERR_ALREADY_SCHEDULED,
+  RTIMER_ERR_FULL,		/* not used - what should it do ? */
+  RTIMER_ERR_TIME,		/* not used - sounds racy */
+  RTIMER_ERR_ALREADY_SCHEDULED,	/* not used - would break compatibility */
 };
 
 /**
