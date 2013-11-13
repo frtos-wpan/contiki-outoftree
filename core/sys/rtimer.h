@@ -52,8 +52,6 @@
 #ifndef __RTIMER_H__
 #define __RTIMER_H__
 
-#include <stdbool.h>
-
 #include "contiki-conf.h"
 
 #ifndef RTIMER_CLOCK_LT
