@@ -30,8 +30,8 @@
  *
  */
 
-#ifndef __CONTIKI_CONF_H__
-#define __CONTIKI_CONF_H__
+#ifndef CONTIKI_CONF_H_
+#define CONTIKI_CONF_H_
 
 #include <inttypes.h>
 
@@ -195,4 +195,4 @@ int strcasecmp(const char*, const char*);
 
 #define RTIMER_CLOCK_LT(a,b)	((a) < (b))
 
-#endif /* __CONTIKI_CONF_H__ */
+#endif /* CONTIKI_CONF_H_ */

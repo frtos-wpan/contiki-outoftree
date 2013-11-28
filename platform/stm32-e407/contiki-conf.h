@@ -1,5 +1,5 @@
-#ifndef __CONTIKI_CONF_H__CDBB4VIH3I__
-#define __CONTIKI_CONF_H__CDBB4VIH3I__
+#ifndef CONTIKI_CONF_H_
+#define CONTIKI_CONF_H_
 
 #include <stdint.h>
 
@@ -49,4 +49,4 @@ typedef unsigned int uip_stats_t;
 #define AHB_SPEED MCK
 #endif
 
-#endif /* __CONTIKI_CONF_H__CDBB4VIH3I__ */
+#endif /* CONTIKI_CONF_H_ */
