@@ -68,7 +68,9 @@ typedef unsigned short uip_stats_t;
 
 #define NETSTACK_CONF_MAC     nullmac_driver
 #define NETSTACK_CONF_RDC     sicslowmac_driver
+#ifndef NETSTACK_CONF_RADIO
 #define NETSTACK_CONF_RADIO   rf230_driver
+#endif
 #define NETSTACK_CONF_FRAMER  framer_802154
 
 #if UIP_CONF_IPV6
