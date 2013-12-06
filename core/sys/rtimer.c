@@ -88,8 +88,9 @@ schedule_locked(rtimer_clock_t time)
      * Since schedule_locked is run while "locked" is set, we're guaranteed
      * that "deferred" will be checked later on.
      */
-    if(!RTIMER_CLOCK_LT(RTIMER_NOW(), time))
+    if(!RTIMER_CLOCK_LT(RTIMER_NOW(), time)) {
       deferred = 1;
+    }
 }
 /*---------------------------------------------------------------------------*/
 static int
@@ -104,23 +105,28 @@ set_locked(struct rtimer *rtimer, rtimer_clock_t time,
    * timers to be rescheduled with impunity, so we maintain de facto
    * compatibility.
    */
-  for(anchor = &next_rtimer; *anchor; anchor = &(*anchor)->next)
+  for(anchor = &next_rtimer; *anchor; anchor = &(*anchor)->next) {
     if(*anchor == rtimer) {
       *anchor = rtimer->next;
       break;
     }
+  }
   rtimer->time = time;
   rtimer->func = func;
   rtimer->ptr = func;
   rtimer->cancel = 0;
 
-  for(anchor = &next_rtimer; *anchor && RTIMER_CLOCK_LT((*anchor)->time, time);
-       anchor = &(*anchor)->next);
+  for(anchor = &next_rtimer; *anchor; anchor = &(*anchor)->next) {
+    if (!RTIMER_CLOCK_LT((*anchor)->time, time) {
+      break;
+    }
+  }
   rtimer->next = *anchor;
   *anchor = rtimer;
 
-  if(next_rtimer == rtimer)
+  if(next_rtimer == rtimer) {
     schedule_locked(time);
+  }
   return RTIMER_OK;
 }
 /*---------------------------------------------------------------------------*/
@@ -133,11 +139,13 @@ next_timer_locked(void)
   while(next_rtimer && !RTIMER_CLOCK_LT(now, next_rtimer->time)) {
     t = next_rtimer;   
     next_rtimer = t->next;
-    if(!t->cancel)
+    if(!t->cancel) {
       t->func(t, t->ptr);
+    }
   }
-  if(next_rtimer)
+  if(next_rtimer) {
     schedule_locked(next_rtimer->time);
+  }
 }
 
 /*---------------------------------------------------------------------------*/
