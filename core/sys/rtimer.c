@@ -71,6 +71,31 @@ rtimer_init(void)
 
 /*---------------------------------------------------------------------------*/
 
+static void
+schedule_locked(rtimer_clock_t time)
+{
+    rtimer_arch_schedule(time);
+
+    /*
+     * The behaviour of rtimer_arch_schedule when the time is in the past,
+     * equal to the present, or changes from future to past/present while
+     * rtimer_arch_schedule is running is undefined. In particular, no timer
+     * interrupt may be generated in such cases, causing the timer to expire
+     * in the distant future or possibly never at all.
+     *
+     * We therefore check whether the expiration time is still in the future
+     * after rtimer_arch_schedule. If not, the timer may still be pending and
+     * we have to process it "manually" (through run_deferred).
+     *
+     * Since schedule_locked is run while "locked" is set, we're guaranteed
+     * that "deferred" will be checked later on.
+     */
+    if (!RTIMER_CLOCK_LT(RTIMER_NOW(), time))
+      deferred = 1;
+}
+
+/*---------------------------------------------------------------------------*/
+
 static int
 set_locked(struct rtimer *rtimer, rtimer_clock_t time,
 	   rtimer_callback_t func, void *ptr)
@@ -99,7 +124,7 @@ set_locked(struct rtimer *rtimer, rtimer_clock_t time,
   *anchor = rtimer;
 
   if (next_rtimer == rtimer)
-    rtimer_arch_schedule(time);
+    schedule_locked(time);
   return RTIMER_OK;
 }
 
@@ -117,7 +142,7 @@ static void next_timer_locked(void)
       t->func(t, t->ptr);
   }
   if (next_rtimer)
-    rtimer_arch_schedule(next_rtimer->time);
+    schedule_locked(next_rtimer->time);
 }
 
 /*---------------------------------------------------------------------------*/
