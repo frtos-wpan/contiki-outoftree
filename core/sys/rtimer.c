@@ -68,9 +68,7 @@ rtimer_init(void)
 {
   rtimer_arch_init();
 }
-
 /*---------------------------------------------------------------------------*/
-
 static void
 schedule_locked(rtimer_clock_t time)
 {
@@ -90,12 +88,10 @@ schedule_locked(rtimer_clock_t time)
      * Since schedule_locked is run while "locked" is set, we're guaranteed
      * that "deferred" will be checked later on.
      */
-    if (!RTIMER_CLOCK_LT(RTIMER_NOW(), time))
+    if(!RTIMER_CLOCK_LT(RTIMER_NOW(), time))
       deferred = 1;
 }
-
 /*---------------------------------------------------------------------------*/
-
 static int
 set_locked(struct rtimer *rtimer, rtimer_clock_t time,
 	   rtimer_callback_t func, void *ptr)
@@ -108,8 +104,8 @@ set_locked(struct rtimer *rtimer, rtimer_clock_t time,
    * timers to be rescheduled with impunity, so we maintain de facto
    * compatibility.
    */
-  for (anchor = &next_rtimer; *anchor; anchor = &(*anchor)->next)
-    if (*anchor == rtimer) {
+  for(anchor = &next_rtimer; *anchor; anchor = &(*anchor)->next)
+    if(*anchor == rtimer) {
       *anchor = rtimer->next;
       break;
     }
@@ -118,30 +114,29 @@ set_locked(struct rtimer *rtimer, rtimer_clock_t time,
   rtimer->ptr = func;
   rtimer->cancel = 0;
 
-  for (anchor = &next_rtimer; *anchor && RTIMER_CLOCK_LT((*anchor)->time, time);
+  for(anchor = &next_rtimer; *anchor && RTIMER_CLOCK_LT((*anchor)->time, time);
        anchor = &(*anchor)->next);
   rtimer->next = *anchor;
   *anchor = rtimer;
 
-  if (next_rtimer == rtimer)
+  if(next_rtimer == rtimer)
     schedule_locked(time);
   return RTIMER_OK;
 }
-
 /*---------------------------------------------------------------------------*/
-
-static void next_timer_locked(void)
+static void
+next_timer_locked(void)
 {
   rtimer_clock_t now = RTIMER_NOW();
   struct rtimer *t;
 
-  while (next_rtimer && !RTIMER_CLOCK_LT(now, next_rtimer->time)) {
+  while(next_rtimer && !RTIMER_CLOCK_LT(now, next_rtimer->time)) {
     t = next_rtimer;   
     next_rtimer = t->next;
-    if (!t->cancel)
+    if(!t->cancel)
       t->func(t, t->ptr);
   }
-  if (next_rtimer)
+  if(next_rtimer)
     schedule_locked(next_rtimer->time);
 }
 
@@ -149,7 +144,7 @@ static void next_timer_locked(void)
 static void
 run_deferred(void)
 {
-  while (deferred) {
+  while(deferred) {
     locked = 1;
     deferred = 0;
     next_timer_locked();
@@ -166,7 +161,7 @@ rtimer_set(struct rtimer *rtimer, rtimer_clock_t time,
 
   PRINTF("rtimer_set time %d\n", time);
 
-  if (locked) {
+  if(locked) {
     res = set_locked(rtimer, time, func, ptr);
   } else {
     locked = 1;
@@ -186,7 +181,7 @@ rtimer_cancel(struct rtimer *rtimer)
 void
 rtimer_run_next(void)
 {
-  if (locked) {
+  if(locked) {
     deferred = 1;
     return;
   }
