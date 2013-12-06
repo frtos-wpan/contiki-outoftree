@@ -149,7 +149,6 @@ next_timer_locked(void)
     schedule_locked(next_rtimer->time);
   }
 }
-
 /*---------------------------------------------------------------------------*/
 static void
 run_deferred(void)
