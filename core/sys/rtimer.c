@@ -135,15 +135,17 @@ next_timer_locked(void)
 {
   rtimer_clock_t now = RTIMER_NOW();
   struct rtimer *t;
+  bool need_sched = 0;
 
   while(next_rtimer && !RTIMER_CLOCK_LT(now, next_rtimer->time)) {
     t = next_rtimer;   
     next_rtimer = t->next;
     if(!t->cancel) {
       t->func(t, t->ptr);
+      need_sched |= t != next_rtimer;
     }
   }
-  if(next_rtimer) {
+  if(next_rtimer && need_sched) {
     schedule_locked(next_rtimer->time);
   }
 }
