@@ -117,7 +117,7 @@ set_locked(struct rtimer *rtimer, rtimer_clock_t time,
   rtimer->cancel = 0;
 
   for(anchor = &next_rtimer; *anchor; anchor = &(*anchor)->next) {
-    if (!RTIMER_CLOCK_LT((*anchor)->time, time) {
+    if(!RTIMER_CLOCK_LT((*anchor)->time, time)) {
       break;
     }
   }
